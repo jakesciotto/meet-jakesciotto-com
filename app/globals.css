@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* --- Light theme (default) --- */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -22,6 +23,34 @@
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --radius: 0.625rem;
+
+  /* Brand: Supabase green (mostly used in dark mode glow). */
+  --brand-green: #3ecf8e;
+}
+
+/* --- Dark theme (follows system preference) --- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.005 240);
+    --foreground: oklch(0.97 0 0);
+    --card: oklch(0.205 0.005 240);
+    --card-foreground: oklch(0.97 0 0);
+    --popover: oklch(0.205 0.005 240);
+    --popover-foreground: oklch(0.97 0 0);
+    --primary: oklch(0.81 0.18 158); /* Supabase-ish green */
+    --primary-foreground: oklch(0.16 0.005 240);
+    --secondary: oklch(0.27 0.005 240);
+    --secondary-foreground: oklch(0.97 0 0);
+    --muted: oklch(0.24 0.005 240);
+    --muted-foreground: oklch(0.7 0 0);
+    --accent: oklch(0.27 0.005 240);
+    --accent-foreground: oklch(0.97 0 0);
+    --destructive: oklch(0.65 0.22 27);
+    --destructive-foreground: oklch(0.97 0 0);
+    --border: oklch(0.3 0.005 240);
+    --input: oklch(0.3 0.005 240);
+    --ring: oklch(0.81 0.18 158);
+  }
 }
 
 @theme inline {
@@ -56,9 +85,26 @@
   * {
     border-color: var(--border);
   }
+  html,
   body {
-    background-color: var(--background);
+    min-height: 100svh;
+  }
+  body {
     color: var(--foreground);
     font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    background-color: var(--background);
+    /* Subtle radial green wash, top-left. Visible mainly in dark mode. */
+    background-image:
+      radial-gradient(
+        ellipse 80% 50% at 20% -10%,
+        color-mix(in oklab, var(--brand-green) 14%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 60% 40% at 100% 0%,
+        color-mix(in oklab, var(--brand-green) 8%, transparent),
+        transparent 70%
+      );
+    background-attachment: fixed;
   }
 }

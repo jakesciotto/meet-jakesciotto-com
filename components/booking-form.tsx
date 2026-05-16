@@ -11,6 +11,11 @@ import { createBooking } from "@/actions/create-booking";
 
 type Conferencing = "meet" | "phone";
 
+function isLikelyEmail(s: string): boolean {
+  if (s.length < 3 || s.length > 200) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
 export function BookingForm({
   date,
   startIso,
@@ -88,28 +93,20 @@ export function BookingForm({
           onValueChange={(v) => setConferencing(v as Conferencing)}
           className="grid gap-2"
         >
-          <div
-            role="button"
-            tabIndex={-1}
-            onClick={() => setConferencing("meet")}
-            className="flex items-center gap-3 rounded-lg border bg-card p-3 cursor-pointer hover:bg-accent"
+          <Label
+            htmlFor="conf-meet"
+            className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal hover:bg-accent"
           >
             <RadioGroupItem value="meet" id="conf-meet" />
-            <Label htmlFor="conf-meet" className="flex-1 cursor-pointer">
-              Google Meet (video)
-            </Label>
-          </div>
-          <div
-            role="button"
-            tabIndex={-1}
-            onClick={() => setConferencing("phone")}
-            className="flex items-center gap-3 rounded-lg border bg-card p-3 cursor-pointer hover:bg-accent"
+            <span>Google Meet (video)</span>
+          </Label>
+          <Label
+            htmlFor="conf-phone"
+            className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal hover:bg-accent"
           >
             <RadioGroupItem value="phone" id="conf-phone" />
-            <Label htmlFor="conf-phone" className="flex-1 cursor-pointer">
-              Quick call
-            </Label>
-          </div>
+            <span>Quick call</span>
+          </Label>
         </RadioGroup>
       </div>
 

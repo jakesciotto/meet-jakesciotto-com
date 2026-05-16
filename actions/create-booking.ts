@@ -3,7 +3,6 @@
 import { z } from "zod";
 import { serviceClient } from "@/lib/supabase";
 import { insertEvent } from "@/lib/google-calendar";
-import { sendConfirmation } from "@/lib/email";
 import { config } from "@/lib/config";
 import { getSlots } from "./get-slots";
 import { clearSlotsCache } from "@/lib/slots-cache";
@@ -11,11 +10,11 @@ import { clearSlotsCache } from "@/lib/slots-cache";
 const InputSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   startIso: z.string().datetime(),
-  name: z.string().min(1).max(100),
-  email: z.string().email(),
+  name: z.string().trim().min(1).max(100),
+  email: z.string().trim().toLowerCase().email().max(200),
   conferencing: z.enum(["meet", "phone"]),
-  phone: z.string().max(40).optional(),
-  notes: z.string().max(1000).optional(),
+  phone: z.string().trim().max(40).optional(),
+  notes: z.string().trim().max(1000).optional(),
 });
 
 export type CreateBookingInput = z.infer<typeof InputSchema>;
@@ -94,21 +93,6 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
   }
 
   clearSlotsCache();
-
-  try {
-    await sendConfirmation({
-      bookingId: inserted.id,
-      inviteeName: input.name,
-      inviteeEmail: input.email,
-      startsAt,
-      endsAt,
-      conferencing: input.conferencing,
-      meetLink: event.meetLink,
-      inviteePhone: input.phone,
-    });
-  } catch (e) {
-    console.error("Confirmation email failed (booking still created)", e);
-  }
 
   return { ok: true, bookingId: inserted.id };
 }
