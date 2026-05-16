@@ -4,12 +4,9 @@ import { fromZonedTime } from "date-fns-tz";
 import { serviceClient } from "@/lib/supabase";
 import { getFreeBusy } from "@/lib/google-calendar";
 import { computeSlots, type AvailabilityRule, type BusyRange, type Slot } from "@/lib/slots";
+import { getCachedSlots, setCachedSlots } from "@/lib/slots-cache";
 import { config } from "@/lib/config";
 import { weekdayOf } from "@/lib/dates";
-
-type CacheEntry = { expires: number; slots: Slot[] };
-const CACHE = new Map<string, CacheEntry>();
-const CACHE_TTL_MS = 5 * 60 * 1000;
 
 function dayBoundsUtc(date: string, tz: string): { startIso: string; endIso: string } {
   const start = fromZonedTime(`${date}T00:00:00`, tz);
@@ -23,9 +20,8 @@ export async function getSlots(date: string): Promise<Slot[]> {
     throw new Error("Invalid date format. Expected YYYY-MM-DD.");
   }
 
-  const cacheKey = date;
-  const cached = CACHE.get(cacheKey);
-  if (cached && cached.expires > Date.now()) return cached.slots;
+  const cached = getCachedSlots(date);
+  if (cached) return cached;
 
   const supabase = serviceClient();
   const weekday = weekdayOf(date);
@@ -51,7 +47,7 @@ export async function getSlots(date: string): Promise<Slot[]> {
   if (bookingsRes.error) throw new Error(bookingsRes.error.message);
 
   if (blockedRes.data.length > 0) {
-    CACHE.set(cacheKey, { expires: Date.now() + CACHE_TTL_MS, slots: [] });
+    setCachedSlots(date, []);
     return [];
   }
 
@@ -78,10 +74,6 @@ export async function getSlots(date: string): Promise<Slot[]> {
     },
   });
 
-  CACHE.set(cacheKey, { expires: Date.now() + CACHE_TTL_MS, slots });
+  setCachedSlots(date, slots);
   return slots;
-}
-
-export function invalidateSlotsCache(): void {
-  CACHE.clear();
 }

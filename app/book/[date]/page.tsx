@@ -16,6 +16,7 @@ function formatHeader(date: string): string {
     month: "long",
     day: "numeric",
     year: "numeric",
+    timeZone: "UTC",
   }).format(new Date(Date.UTC(y, m - 1, d)));
 }
 
