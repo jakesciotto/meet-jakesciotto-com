@@ -11,7 +11,9 @@ const baseConfig = {
 };
 
 // A weekday with rule 9:00-12:00 = 6 slots (9, 9:30, 10, 10:30, 11, 11:30)
-const nineToNoon: AvailabilityRule[] = [{ startMinute: 9 * 60, endMinute: 12 * 60 }];
+const nineToNoon: AvailabilityRule[] = [
+  { startMinute: 9 * 60, endMinute: 12 * 60 },
+];
 
 describe("computeSlots", () => {
   it("returns slots across a 9-12 window when nothing is busy", () => {
@@ -45,7 +47,10 @@ describe("computeSlots", () => {
   it("excludes slots that overlap a busy range", () => {
     // Busy 10:00-11:00 NY = 14:00-15:00 UTC on EDT date
     const busy: BusyRange[] = [
-      { start: new Date("2026-06-09T14:00:00Z"), end: new Date("2026-06-09T15:00:00Z") },
+      {
+        start: new Date("2026-06-09T14:00:00Z"),
+        end: new Date("2026-06-09T15:00:00Z"),
+      },
     ];
     const slots = computeSlots({
       date: "2026-06-09",
@@ -71,7 +76,10 @@ describe("computeSlots", () => {
       rules: nineToNoon,
       busyRanges: [],
       bookings: [
-        { start: new Date("2026-06-09T13:00:00Z"), end: new Date("2026-06-09T13:30:00Z") },
+        {
+          start: new Date("2026-06-09T13:00:00Z"),
+          end: new Date("2026-06-09T13:30:00Z"),
+        },
       ],
       now: new Date("2026-06-01T12:00:00Z"),
       config: baseConfig,
@@ -126,7 +134,9 @@ describe("computeSlots", () => {
       now: new Date("2026-06-08T13:00:01Z"),
       config: baseConfig,
     });
-    expect(underBy1s[0].startsAt.toISOString()).toBe("2026-06-09T13:30:00.000Z");
+    expect(underBy1s[0].startsAt.toISOString()).toBe(
+      "2026-06-09T13:30:00.000Z",
+    );
   });
 
   it("handles multiple availability windows in one day", () => {
