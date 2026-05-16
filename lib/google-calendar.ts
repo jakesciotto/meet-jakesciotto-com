@@ -92,8 +92,9 @@ export type InsertEventInput = {
   endsAt: Date;
   attendeeEmail: string;
   attendeeName: string;
-  conferencing: "meet" | "phone";
+  conferencing: "meet" | "phone" | "other";
   invitee_phone?: string;
+  meeting_link?: string;
 };
 
 export type InsertEventResult = {
@@ -105,9 +106,9 @@ export async function insertEvent(input: InsertEventInput): Promise<InsertEventR
   const calendar = await getAdminCalendarClient();
   const requestId = crypto.randomUUID();
 
+  let description = input.description;
   const requestBody: calendar_v3.Schema$Event = {
     summary: input.summary,
-    description: input.description,
     start: { dateTime: input.startsAt.toISOString() },
     end: { dateTime: input.endsAt.toISOString() },
     attendees: [{ email: input.attendeeEmail, displayName: input.attendeeName }],
@@ -124,7 +125,12 @@ export async function insertEvent(input: InsertEventInput): Promise<InsertEventR
     requestBody.location = input.invitee_phone
       ? `Phone: ${input.invitee_phone}`
       : "Phone (number to be provided)";
+  } else if (input.conferencing === "other" && input.meeting_link) {
+    requestBody.location = input.meeting_link;
+    description = `Join link: ${input.meeting_link}\n\n${description}`;
   }
+
+  requestBody.description = description;
 
   const { data } = await calendar.events.insert({
     calendarId: "primary",

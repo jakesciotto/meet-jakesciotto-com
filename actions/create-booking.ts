@@ -13,8 +13,9 @@ const InputSchema = z.object({
   name: z.string().trim().min(1).max(100),
   company: z.string().trim().min(1).max(120),
   email: z.string().trim().toLowerCase().email().max(200),
-  conferencing: z.enum(["meet", "phone"]),
+  conferencing: z.enum(["meet", "phone", "other"]),
   phone: z.string().trim().max(40).optional(),
+  meetingLink: z.string().trim().url().max(500).optional(),
   notes: z.string().trim().max(1000).optional(),
 });
 
@@ -33,6 +34,9 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
 
   if (input.conferencing === "phone" && !input.phone) {
     return { ok: false, error: "validation", message: "Phone number is required for phone calls." };
+  }
+  if (input.conferencing === "other" && !input.meetingLink) {
+    return { ok: false, error: "validation", message: "Please paste your meeting link." };
   }
 
   const slots = await getSlots(input.date);
@@ -63,6 +67,7 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
       attendeeName: input.name,
       conferencing: input.conferencing,
       invitee_phone: input.phone,
+      meeting_link: input.meetingLink,
     });
   } catch (e) {
     console.error("Failed to insert Google Calendar event", e);
@@ -82,6 +87,7 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
       invitee_company: input.company,
       invitee_email: input.email,
       invitee_phone: input.phone ?? null,
+      meeting_link: input.meetingLink ?? null,
       conferencing: input.conferencing,
       starts_at: startsAt.toISOString(),
       ends_at: endsAt.toISOString(),

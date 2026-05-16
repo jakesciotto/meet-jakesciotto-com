@@ -20,7 +20,7 @@ async function loadDisabledDates() {
   const from = todayInTz(config.hostTz);
   const to = addDays(from, config.horizonDays);
   const disabled = eachDay(from, to).filter(
-    (d) => !weekdaysWithRules.has(weekdayOf(d)) || blockedSet.has(d)
+    (d) => !weekdaysWithRules.has(weekdayOf(d)) || blockedSet.has(d),
   );
 
   return { from, to, disabled };
@@ -32,10 +32,10 @@ export default async function HomePage() {
     <main className="mx-auto flex min-h-svh max-w-md flex-col justify-center px-4 py-10">
       <div className="space-y-6">
         <header className="space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">Book a meeting</h1>
-          <p className="text-sm text-muted-foreground">
-            Pick a date to see available times.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            book a meeting
+          </h1>
+          <p className="text-sm text-muted-foreground">you lookin' for me?</p>
         </header>
         <DatePicker disabledDates={disabled} fromDate={from} toDate={to} />
       </div>

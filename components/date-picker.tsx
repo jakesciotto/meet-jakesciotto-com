@@ -13,7 +13,11 @@ export type DatePickerProps = {
   toDate: string;
 };
 
-export function DatePicker({ disabledDates, fromDate, toDate }: DatePickerProps) {
+export function DatePicker({
+  disabledDates,
+  fromDate,
+  toDate,
+}: DatePickerProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const disabledSet = new Set(disabledDates);
@@ -41,7 +45,7 @@ export function DatePicker({ disabledDates, fromDate, toDate }: DatePickerProps)
           (date) => disabledSet.has(toIsoDate(date)),
         ]}
         showOutsideDays={false}
-        className="mx-auto"
+        className="mx-auto rounded-lg bg-transparent"
       />
     </div>
   );

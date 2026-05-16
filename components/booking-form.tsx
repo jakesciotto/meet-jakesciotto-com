@@ -9,11 +9,20 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { createBooking } from "@/actions/create-booking";
 
-type Conferencing = "meet" | "phone";
+type Conferencing = "meet" | "phone" | "other";
 
 function isLikelyEmail(s: string): boolean {
   if (s.length < 3 || s.length > 200) return false;
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
+function isLikelyUrl(s: string): boolean {
+  try {
+    const u = new URL(s);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 export function BookingForm({
@@ -39,6 +48,10 @@ export function BookingForm({
       conferencing === "phone"
         ? String(data.get("phone") ?? "").trim()
         : undefined;
+    const meetingLink =
+      conferencing === "other"
+        ? String(data.get("meetingLink") ?? "").trim()
+        : undefined;
     const notes = String(data.get("notes") ?? "").trim() || undefined;
 
     if (!name) return setError("Please enter your name.");
@@ -47,8 +60,22 @@ export function BookingForm({
     if (conferencing === "phone" && !phone) {
       return setError("Please enter a phone number so I can call you.");
     }
+    if (conferencing === "other") {
+      if (!meetingLink) return setError("Please paste your meeting link.");
+      if (!isLikelyUrl(meetingLink)) return setError("That doesn't look like a valid URL.");
+    }
 
-    const input = { date, startIso, name, company, email, conferencing, phone, notes };
+    const input = {
+      date,
+      startIso,
+      name,
+      company,
+      email,
+      conferencing,
+      phone,
+      meetingLink,
+      notes,
+    };
 
     startTransition(async () => {
       const result = await createBooking(input);
@@ -120,6 +147,13 @@ export function BookingForm({
             <RadioGroupItem value="phone" id="conf-phone" />
             <span>Quick call</span>
           </Label>
+          <Label
+            htmlFor="conf-other"
+            className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal transition-colors hover:bg-accent"
+          >
+            <RadioGroupItem value="other" id="conf-other" />
+            <span>Other (I&rsquo;ll bring a link)</span>
+          </Label>
         </RadioGroup>
       </div>
 
@@ -141,6 +175,29 @@ export function BookingForm({
               inputMode="tel"
               maxLength={40}
               tabIndex={conferencing === "phone" ? 0 : -1}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={`grid transition-all duration-200 ease-out ${
+          conferencing === "other"
+            ? "grid-rows-[1fr] opacity-100"
+            : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="space-y-2 pt-1">
+            <Label htmlFor="meetingLink">Meeting link (Teams, Zoom, etc.)</Label>
+            <Input
+              id="meetingLink"
+              name="meetingLink"
+              type="url"
+              inputMode="url"
+              placeholder="https://teams.microsoft.com/..."
+              maxLength={500}
+              tabIndex={conferencing === "other" ? 0 : -1}
             />
           </div>
         </div>
