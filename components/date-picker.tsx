@@ -30,7 +30,7 @@ export function DatePicker({ disabledDates, fromDate, toDate }: DatePickerProps)
   return (
     <div
       aria-busy={pending}
-      className="rounded-xl border bg-card p-3 sm:p-4"
+      className="anim-in-fade-up rounded-xl border bg-card p-2 shadow-sm sm:p-3"
     >
       <Calendar
         mode="single"

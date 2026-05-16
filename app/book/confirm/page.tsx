@@ -28,19 +28,21 @@ export default async function ConfirmPage({ searchParams }: { searchParams: Sear
   if (!date || !start) notFound();
 
   return (
-    <main className="mx-auto max-w-md px-4 py-10">
-      <div className="mb-6">
-        <Button asChild variant="ghost" size="sm">
-          <Link href={`/book/${date}`}>← Pick a different time</Link>
-        </Button>
+    <main className="mx-auto flex min-h-svh max-w-md flex-col justify-center px-4 py-10">
+      <div>
+        <div className="anim-in-fade mb-6">
+          <Button asChild variant="ghost" size="sm">
+            <Link href={`/book/${date}`}>← Pick a different time</Link>
+          </Button>
+        </div>
+        <header className="anim-in-fade-up mb-6 space-y-1">
+          <h1 className="text-xl font-semibold tracking-tight">{formatHeader(date, start)}</h1>
+          <p className="text-sm text-muted-foreground">
+            Tell me a bit about you and how to meet.
+          </p>
+        </header>
+        <BookingForm date={date} startIso={start} />
       </div>
-      <header className="mb-6 space-y-1">
-        <h1 className="text-xl font-semibold tracking-tight">{formatHeader(date, start)}</h1>
-        <p className="text-sm text-muted-foreground">
-          Tell me a bit about you and how to meet.
-        </p>
-      </header>
-      <BookingForm date={date} startIso={start} />
     </main>
   );
 }

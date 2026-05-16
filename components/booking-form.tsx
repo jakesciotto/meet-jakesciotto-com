@@ -33,6 +33,7 @@ export function BookingForm({
     setError(null);
     const data = new FormData(e.currentTarget);
     const name = String(data.get("name") ?? "").trim();
+    const company = String(data.get("company") ?? "").trim();
     const email = String(data.get("email") ?? "").trim().toLowerCase();
     const phone =
       conferencing === "phone"
@@ -41,12 +42,13 @@ export function BookingForm({
     const notes = String(data.get("notes") ?? "").trim() || undefined;
 
     if (!name) return setError("Please enter your name.");
+    if (!company) return setError("Please enter your company.");
     if (!isLikelyEmail(email)) return setError("That doesn't look like a valid email address.");
     if (conferencing === "phone" && !phone) {
       return setError("Please enter a phone number so I can call you.");
     }
 
-    const input = { date, startIso, name, email, conferencing, phone, notes };
+    const input = { date, startIso, name, company, email, conferencing, phone, notes };
 
     startTransition(async () => {
       const result = await createBooking(input);
@@ -63,17 +65,28 @@ export function BookingForm({
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-5">
       {error && (
-        <Alert variant="destructive">
-          <AlertTitle>We couldn&rsquo;t book that</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+        <div className="anim-in-fade-up">
+          <Alert variant="destructive">
+            <AlertTitle>We couldn&rsquo;t book that</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        </div>
       )}
 
-      <div className="space-y-2">
+      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "0ms" }}>
         <Label htmlFor="name">Your name</Label>
         <Input id="name" name="name" autoComplete="name" maxLength={100} />
       </div>
-      <div className="space-y-2">
+      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "60ms" }}>
+        <Label htmlFor="company">Company</Label>
+        <Input
+          id="company"
+          name="company"
+          autoComplete="organization"
+          maxLength={120}
+        />
+      </div>
+      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "120ms" }}>
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -86,7 +99,7 @@ export function BookingForm({
         />
       </div>
 
-      <div className="space-y-2">
+      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "180ms" }}>
         <Label>How should we meet?</Label>
         <RadioGroup
           value={conferencing}
@@ -95,14 +108,14 @@ export function BookingForm({
         >
           <Label
             htmlFor="conf-meet"
-            className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal hover:bg-accent"
+            className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal transition-colors hover:bg-accent"
           >
             <RadioGroupItem value="meet" id="conf-meet" />
             <span>Google Meet (video)</span>
           </Label>
           <Label
             htmlFor="conf-phone"
-            className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal hover:bg-accent"
+            className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal transition-colors hover:bg-accent"
           >
             <RadioGroupItem value="phone" id="conf-phone" />
             <span>Quick call</span>
@@ -110,28 +123,39 @@ export function BookingForm({
         </RadioGroup>
       </div>
 
-      {conferencing === "phone" && (
-        <div className="space-y-2">
-          <Label htmlFor="phone">Phone number</Label>
-          <Input
-            id="phone"
-            name="phone"
-            type="tel"
-            autoComplete="tel"
-            inputMode="tel"
-            maxLength={40}
-          />
+      <div
+        className={`grid transition-all duration-200 ease-out ${
+          conferencing === "phone"
+            ? "grid-rows-[1fr] opacity-100"
+            : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="space-y-2 pt-1">
+            <Label htmlFor="phone">Phone number</Label>
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              inputMode="tel"
+              maxLength={40}
+              tabIndex={conferencing === "phone" ? 0 : -1}
+            />
+          </div>
         </div>
-      )}
+      </div>
 
-      <div className="space-y-2">
+      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "180ms" }}>
         <Label htmlFor="notes">Anything I should know? (optional)</Label>
         <Input id="notes" name="notes" />
       </div>
 
-      <Button type="submit" size="lg" className="w-full" disabled={pending}>
-        {pending ? "Booking…" : "Confirm booking"}
-      </Button>
+      <div className="anim-in-fade-up" style={{ animationDelay: "240ms" }}>
+        <Button type="submit" size="lg" className="w-full" disabled={pending}>
+          {pending ? "Booking…" : "Confirm booking"}
+        </Button>
+      </div>
     </form>
   );
 }

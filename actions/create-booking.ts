@@ -11,6 +11,7 @@ const InputSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   startIso: z.string().datetime(),
   name: z.string().trim().min(1).max(100),
+  company: z.string().trim().min(1).max(120),
   email: z.string().trim().toLowerCase().email().max(200),
   conferencing: z.enum(["meet", "phone"]),
   phone: z.string().trim().max(40).optional(),
@@ -43,14 +44,18 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
   const startsAt = new Date(input.startIso);
   const endsAt = new Date(startsAt.getTime() + config.slotMinutes * 60 * 1000);
 
-  const description = input.notes
-    ? `Booking via meet.jakesciotto.com\n\nNotes:\n${input.notes}`
-    : "Booking via meet.jakesciotto.com";
+  const description = [
+    `Booking via meet.jakesciotto.com`,
+    `Company: ${input.company}`,
+    input.notes ? `\nNotes:\n${input.notes}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   let event: Awaited<ReturnType<typeof insertEvent>>;
   try {
     event = await insertEvent({
-      summary: `Meeting with ${input.name}`,
+      summary: `Meeting with ${input.name} (${input.company})`,
       description,
       startsAt,
       endsAt,
@@ -74,6 +79,7 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
     .insert({
       google_event_id: event.eventId,
       invitee_name: input.name,
+      invitee_company: input.company,
       invitee_email: input.email,
       invitee_phone: input.phone ?? null,
       conferencing: input.conferencing,
