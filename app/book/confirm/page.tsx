@@ -21,22 +21,28 @@ function formatHeader(startIso: string): string {
   return `${day} at ${time}`;
 }
 
-export default async function ConfirmPage({ searchParams }: { searchParams: Search }) {
+export default async function ConfirmPage({
+  searchParams,
+}: {
+  searchParams: Search;
+}) {
   const { date, start } = await searchParams;
   if (!date || !start) notFound();
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-md flex-col justify-center px-4 py-10">
+    <main className="mx-auto flex min-h-svh max-w-2xl flex-col justify-center px-4 py-10">
       <div className="anim-in-fade-up">
         <div className="mb-6">
           <Button asChild variant="ghost" size="sm">
-            <Link href={`/?date=${date}`}>← Pick a different time</Link>
+            <Link href={`/?date=${date}`}>← pick a different time</Link>
           </Button>
         </div>
         <header className="mb-6 space-y-1">
-          <h1 className="text-xl font-semibold tracking-tight">{formatHeader(start)}</h1>
+          <h1 className="text-xl font-semibold tracking-tight">
+            {formatHeader(start)}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Tell me a bit about you and how to meet.
+            tell me a little about yourself and how we'll meet
           </p>
         </header>
         <BookingForm date={date} startIso={start} />

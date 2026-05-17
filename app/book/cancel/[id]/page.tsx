@@ -31,7 +31,7 @@ export default async function CancelPage({ params }: Props) {
 
   if (data.cancelled_at) {
     return (
-      <main className="mx-auto max-w-md px-4 py-12 text-center">
+      <main className="mx-auto max-w-2xl px-4 py-12 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Already cancelled</h1>
         <p className="mt-4 text-sm text-muted-foreground">
           This booking was cancelled.{" "}
@@ -42,7 +42,7 @@ export default async function CancelPage({ params }: Props) {
   }
 
   return (
-    <main className="mx-auto max-w-md px-4 py-12">
+    <main className="mx-auto max-w-2xl px-4 py-12">
       <div className="space-y-6 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Cancel this booking?</h1>
         <p>
