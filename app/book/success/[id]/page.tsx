@@ -29,7 +29,7 @@ export default async function SuccessPage({ params }: Props) {
   if (error || !data) notFound();
 
   return (
-    <main className="mx-auto max-w-md px-4 py-12">
+    <main className="mx-auto max-w-2xl px-4 py-12">
       <div className="space-y-6 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">You&rsquo;re booked.</h1>
         <p className="text-base">

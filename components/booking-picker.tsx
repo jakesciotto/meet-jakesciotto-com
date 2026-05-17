@@ -73,7 +73,14 @@ export function BookingPicker({
       now,
       config: slotConfig,
     });
-  }, [selectedDate, rulesByWeekday, parsedBusy, parsedBookings, now, slotConfig]);
+  }, [
+    selectedDate,
+    rulesByWeekday,
+    parsedBusy,
+    parsedBookings,
+    now,
+    slotConfig,
+  ]);
 
   const onDateSelect = (date: Date | undefined) => {
     if (!date) return;
@@ -91,8 +98,8 @@ export function BookingPicker({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-xl border bg-card p-2 shadow-sm sm:p-3">
+    <div className="space-y-5">
+      <div className="rounded-2xl border border-border/60 bg-card p-2 sm:p-3">
         <Calendar
           mode="single"
           onSelect={onDateSelect}
@@ -110,8 +117,8 @@ export function BookingPicker({
       </div>
       {selectedDate && (
         <div key={selectedDate} className="anim-in-fade-up space-y-3">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-base font-semibold tracking-tight">
+          <div className="flex items-baseline justify-between gap-3 border-b border-border/50 pb-2">
+            <h2 className="text-lg font-medium tracking-tight">
               {formatDateHeader(selectedDate)}
             </h2>
             <Button
@@ -185,7 +192,7 @@ function SlotPanel({
             <Button
               asChild
               variant="outline"
-              className="h-12 w-full justify-center text-base transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-sm"
+              className="h-12 w-full justify-center font-mono text-base tracking-tight transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-sm"
             >
               <Link
                 href={{

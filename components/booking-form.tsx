@@ -36,6 +36,7 @@ export function BookingForm({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [conferencing, setConferencing] = useState<Conferencing>("meet");
+  const [pieCharts, setPieCharts] = useState<"yes" | "no" | null>(null);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +44,9 @@ export function BookingForm({
     const data = new FormData(e.currentTarget);
     const name = String(data.get("name") ?? "").trim();
     const company = String(data.get("company") ?? "").trim();
-    const email = String(data.get("email") ?? "").trim().toLowerCase();
+    const email = String(data.get("email") ?? "")
+      .trim()
+      .toLowerCase();
     const phone =
       conferencing === "phone"
         ? String(data.get("phone") ?? "").trim()
@@ -52,17 +55,33 @@ export function BookingForm({
       conferencing === "other"
         ? String(data.get("meetingLink") ?? "").trim()
         : undefined;
-    const notes = String(data.get("notes") ?? "").trim() || undefined;
+    const baseNotes = String(data.get("notes") ?? "").trim();
+    const pieChartsLine =
+      pieCharts === "yes"
+        ? "p.s. thinks pie charts are good"
+        : pieCharts === "no"
+          ? "p.s. thinks pie charts are bad"
+          : null;
+    const notes =
+      [baseNotes || null, pieChartsLine].filter(Boolean).join("\n\n") ||
+      undefined;
 
-    if (!name) return setError("Please enter your name.");
-    if (!company) return setError("Please enter your company.");
-    if (!isLikelyEmail(email)) return setError("That doesn't look like a valid email address.");
+    if (!name) return setError("i have to know who you are");
+    if (!company) return setError("i need to know who you're working for");
+    if (!isLikelyEmail(email))
+      return setError("hmmmm that doesn't look like a valid email address");
     if (conferencing === "phone" && !phone) {
-      return setError("Please enter a phone number so I can call you.");
+      return setError(
+        "well if you don't enter a number i won't be able to call you so",
+      );
     }
     if (conferencing === "other") {
-      if (!meetingLink) return setError("Please paste your meeting link.");
-      if (!isLikelyUrl(meetingLink)) return setError("That doesn't look like a valid URL.");
+      if (!meetingLink)
+        return setError(
+          "okay well if you choose that option you need to paste a link",
+        );
+      if (!isLikelyUrl(meetingLink))
+        return setError("paste an actual link please");
     }
 
     const input = {
@@ -94,18 +113,22 @@ export function BookingForm({
       {error && (
         <div className="anim-in-fade-up">
           <Alert variant="destructive">
-            <AlertTitle>We couldn&rsquo;t book that</AlertTitle>
+            <AlertTitle>we couldn&rsquo;t book that</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         </div>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="name">Your name</Label>
+      <div className="space-y-3">
+        <Label className="pl-1" htmlFor="name">
+          your name
+        </Label>
         <Input id="name" name="name" autoComplete="name" maxLength={100} />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="company">Company</Label>
+      <div className="space-y-3">
+        <Label className="pl-1" htmlFor="company">
+          company
+        </Label>
         <Input
           id="company"
           name="company"
@@ -113,8 +136,10 @@ export function BookingForm({
           maxLength={120}
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+      <div className="space-y-3">
+        <Label className="pl-1" htmlFor="email">
+          email
+        </Label>
         <Input
           id="email"
           name="email"
@@ -126,8 +151,8 @@ export function BookingForm({
         />
       </div>
 
-      <div className="space-y-2">
-        <Label>How should we meet?</Label>
+      <div className="space-y-3">
+        <Label className="pl-1">how should we meet</Label>
         <RadioGroup
           value={conferencing}
           onValueChange={(v) => setConferencing(v as Conferencing)}
@@ -138,21 +163,21 @@ export function BookingForm({
             className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal transition-colors hover:bg-accent"
           >
             <RadioGroupItem value="meet" id="conf-meet" />
-            <span>Google Meet (video)</span>
+            <span>google meet</span>
           </Label>
           <Label
             htmlFor="conf-phone"
             className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal transition-colors hover:bg-accent"
           >
             <RadioGroupItem value="phone" id="conf-phone" />
-            <span>Quick call</span>
+            <span>quick call</span>
           </Label>
           <Label
             htmlFor="conf-other"
             className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-3 font-normal transition-colors hover:bg-accent"
           >
             <RadioGroupItem value="other" id="conf-other" />
-            <span>Other (I&rsquo;ll bring a link)</span>
+            <span>byol - bring your own link</span>
           </Label>
         </RadioGroup>
       </div>
@@ -166,7 +191,7 @@ export function BookingForm({
       >
         <div className="overflow-hidden">
           <div className="space-y-2 pt-1">
-            <Label htmlFor="phone">Phone number</Label>
+            <Label htmlFor="phone">phone number</Label>
             <Input
               id="phone"
               name="phone"
@@ -188,9 +213,10 @@ export function BookingForm({
         }`}
       >
         <div className="overflow-hidden">
-          <div className="space-y-2 pt-1">
-            <Label htmlFor="meetingLink">Meeting link (Teams, Zoom, etc.)</Label>
+          <div className="space-y-3 pt-1">
+            <Label htmlFor="meetingLink">meeting link (please not teams)</Label>
             <Input
+              className="text-muted-foreground text-sm"
               id="meetingLink"
               name="meetingLink"
               type="url"
@@ -203,9 +229,35 @@ export function BookingForm({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="notes">Anything I should know? (optional)</Label>
+      <div className="space-y-3">
+        <Label className="pl-1" htmlFor="notes">
+          anything else you'd like me to know
+        </Label>
         <Input id="notes" name="notes" />
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <Label className="pl-1">pie charts are good</Label>
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            size="sm"
+            variant={pieCharts === "yes" ? "default" : "outline"}
+            onClick={() => setPieCharts(pieCharts === "yes" ? null : "yes")}
+            className="h-7 px-3 text-xs"
+          >
+            yes
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={pieCharts === "no" ? "default" : "outline"}
+            onClick={() => setPieCharts(pieCharts === "no" ? null : "no")}
+            className="h-7 px-3 text-xs"
+          >
+            no
+          </Button>
+        </div>
       </div>
 
       <Button type="submit" size="lg" className="w-full" disabled={pending}>

@@ -37,7 +37,7 @@ export default async function SlotsPage({ params }: Props) {
   }));
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-md flex-col justify-center px-4 py-10">
+    <main className="mx-auto flex min-h-svh max-w-2xl flex-col justify-center px-4 py-10">
       <div className="anim-in-fade-up">
         <div className="mb-6 flex items-center justify-between">
           <Button asChild variant="ghost" size="sm">
@@ -45,7 +45,9 @@ export default async function SlotsPage({ params }: Props) {
           </Button>
         </div>
         <header className="mb-6 space-y-1">
-          <h1 className="text-xl font-semibold tracking-tight">{formatHeader(date)}</h1>
+          <h1 className="text-xl font-semibold tracking-tight">
+            {formatHeader(date)}
+          </h1>
           <p className="text-sm text-muted-foreground">
             Times shown in {config.hostTz.replace("_", " ")}.
           </p>
