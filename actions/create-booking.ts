@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { serviceClient } from "@/lib/supabase";
 import { insertEvent } from "@/lib/google-calendar";
@@ -105,6 +106,7 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
   }
 
   clearSlotsCache();
+  revalidatePath("/");
 
   return { ok: true, bookingId: inserted.id };
 }

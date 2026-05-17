@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { serviceClient } from "@/lib/supabase";
 import { config } from "@/lib/config";
 
-export const dynamic = "force-dynamic";
-
 type Props = { params: Promise<{ id: string }> };
 
 function formatWhen(startsAt: string): string {

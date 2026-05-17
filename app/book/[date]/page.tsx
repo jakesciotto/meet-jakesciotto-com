@@ -5,8 +5,6 @@ import { SlotList, type SlotListItem } from "@/components/slot-list";
 import { getSlots } from "@/actions/get-slots";
 import { config } from "@/lib/config";
 
-export const dynamic = "force-dynamic";
-
 type Props = { params: Promise<{ date: string }> };
 
 function formatHeader(date: string): string {

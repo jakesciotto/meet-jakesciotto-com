@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { serviceClient } from "@/lib/supabase";
 import { deleteEvent } from "@/lib/google-calendar";
@@ -51,6 +52,7 @@ export async function cancelBooking(
   }
 
   clearSlotsCache();
+  revalidatePath("/");
 
   return { ok: true };
 }

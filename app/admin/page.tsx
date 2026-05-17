@@ -10,8 +10,6 @@ import {
 } from "@/components/admin/blocked-dates-editor";
 import { Button } from "@/components/ui/button";
 
-export const dynamic = "force-dynamic";
-
 type RulesByWeekday = Record<number, { startMinute: number; endMinute: number }[]>;
 
 async function loadAdminData() {
