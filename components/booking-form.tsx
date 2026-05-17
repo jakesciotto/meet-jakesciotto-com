@@ -100,11 +100,11 @@ export function BookingForm({
         </div>
       )}
 
-      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "0ms" }}>
+      <div className="space-y-2">
         <Label htmlFor="name">Your name</Label>
         <Input id="name" name="name" autoComplete="name" maxLength={100} />
       </div>
-      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "60ms" }}>
+      <div className="space-y-2">
         <Label htmlFor="company">Company</Label>
         <Input
           id="company"
@@ -113,7 +113,7 @@ export function BookingForm({
           maxLength={120}
         />
       </div>
-      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "120ms" }}>
+      <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -126,7 +126,7 @@ export function BookingForm({
         />
       </div>
 
-      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "180ms" }}>
+      <div className="space-y-2">
         <Label>How should we meet?</Label>
         <RadioGroup
           value={conferencing}
@@ -203,16 +203,14 @@ export function BookingForm({
         </div>
       </div>
 
-      <div className="anim-in-fade-up space-y-2" style={{ animationDelay: "180ms" }}>
+      <div className="space-y-2">
         <Label htmlFor="notes">Anything I should know? (optional)</Label>
         <Input id="notes" name="notes" />
       </div>
 
-      <div className="anim-in-fade-up" style={{ animationDelay: "240ms" }}>
-        <Button type="submit" size="lg" className="w-full" disabled={pending}>
-          {pending ? "Booking…" : "Confirm booking"}
-        </Button>
-      </div>
+      <Button type="submit" size="lg" className="w-full" disabled={pending}>
+        {pending ? "Booking…" : "Confirm booking"}
+      </Button>
     </form>
   );
 }

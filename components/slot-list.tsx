@@ -16,12 +16,8 @@ export function SlotList({ date, slots }: { date: string; slots: SlotListItem[] 
   }
   return (
     <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-      {slots.map((s, i) => (
-        <li
-          key={s.startIso}
-          className="anim-in-fade-up"
-          style={{ animationDelay: `${Math.min(i * 45, 450)}ms` }}
-        >
+      {slots.map((s) => (
+        <li key={s.startIso}>
           <Button
             asChild
             variant="outline"

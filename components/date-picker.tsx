@@ -34,7 +34,7 @@ export function DatePicker({
   return (
     <div
       aria-busy={pending}
-      className="anim-in-fade-up rounded-xl border bg-card p-2 shadow-sm sm:p-3"
+      className="rounded-xl border bg-card p-2 shadow-sm sm:p-3"
     >
       <Calendar
         mode="single"
@@ -45,7 +45,7 @@ export function DatePicker({
           (date) => disabledSet.has(toIsoDate(date)),
         ]}
         showOutsideDays={false}
-        className="mx-auto rounded-lg bg-transparent"
+        className="mx-auto rounded-lg bg-transparent [&_button]:text-base [&_button]:font-normal [--cal-day-text:1.1rem] [--cal-weekday-text:1rem] [--cal-caption-text:1.2rem]"
       />
     </div>
   );

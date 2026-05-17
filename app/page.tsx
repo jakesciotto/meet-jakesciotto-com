@@ -30,7 +30,7 @@ export default async function HomePage() {
   const { from, to, disabled } = await loadDisabledDates();
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col justify-center px-4 py-10">
-      <div className="space-y-6">
+      <div className="anim-in-fade-up space-y-6">
         <header className="space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
             book a meeting

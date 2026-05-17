@@ -1,9 +1,7 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { SlotList, type SlotListItem } from "@/components/slot-list";
-import { SlotListSkeleton } from "@/components/slot-list-skeleton";
 import { getSlots } from "@/actions/get-slots";
 import { config } from "@/lib/config";
 
@@ -30,22 +28,19 @@ function formatSlot(iso: string): string {
   }).format(new Date(iso));
 }
 
-async function SlotsForDate({ date }: { date: string }) {
+export default async function SlotsPage({ params }: Props) {
+  const { date } = await params;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) notFound();
+
   const slots = await getSlots(date);
   const items: SlotListItem[] = slots.map((s) => ({
     startIso: s.startsAt.toISOString(),
     label: formatSlot(s.startsAt.toISOString()),
   }));
-  return <SlotList date={date} slots={items} />;
-}
-
-export default async function SlotsPage({ params }: Props) {
-  const { date } = await params;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) notFound();
 
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col justify-center px-4 py-10">
-      <div>
+      <div className="anim-in-fade-up">
         <div className="mb-6 flex items-center justify-between">
           <Button asChild variant="ghost" size="sm">
             <Link href="/">← Pick a different date</Link>
@@ -57,9 +52,7 @@ export default async function SlotsPage({ params }: Props) {
             Times shown in {config.hostTz.replace("_", " ")}.
           </p>
         </header>
-        <Suspense fallback={<SlotListSkeleton />}>
-          <SlotsForDate date={date} />
-        </Suspense>
+        <SlotList date={date} slots={items} />
       </div>
     </main>
   );
