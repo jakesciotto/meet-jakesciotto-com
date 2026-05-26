@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { computeSlots, type AvailabilityRule, type Slot } from "@/lib/slots";
-import { weekdayOf } from "@/lib/dates";
+import { todayInTz, weekdayOf } from "@/lib/dates";
 
 type SerializedBusyRange = { start: string; end: string };
 
@@ -61,6 +61,8 @@ export function BookingPicker({
 
   // Frozen at first render; sufficient for the 24h minNotice gate.
   const now = useMemo(() => new Date(), []);
+  // Client-side "today" — cache may have served a stale fromDate from a previous day.
+  const today = useMemo(() => todayInTz(slotConfig.hostTz), [slotConfig.hostTz]);
 
   const slots = useMemo<Slot[]>(() => {
     if (!selectedDate) return [];
@@ -107,7 +109,7 @@ export function BookingPicker({
           month={viewMonth}
           onMonthChange={setViewMonth}
           disabled={[
-            { before: parseIsoDate(fromDate) },
+            { before: parseIsoDate(today) },
             { after: parseIsoDate(toDate) },
             (date) => disabledSet.has(toIsoDate(date)),
           ]}

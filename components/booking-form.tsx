@@ -214,14 +214,14 @@ export function BookingForm({
       >
         <div className="overflow-hidden">
           <div className="space-y-3 pt-1">
-            <Label htmlFor="meetingLink">meeting link (please not teams)</Label>
+            <Label htmlFor="meetingLink">meeting link</Label>
             <Input
               className="text-muted-foreground text-sm"
               id="meetingLink"
               name="meetingLink"
               type="url"
               inputMode="url"
-              placeholder="https://teams.microsoft.com/..."
+              placeholder=""
               maxLength={500}
               tabIndex={conferencing === "other" ? 0 : -1}
             />
@@ -231,7 +231,7 @@ export function BookingForm({
 
       <div className="space-y-3">
         <Label className="pl-1" htmlFor="notes">
-          anything else you'd like me to know
+          anything else you'd like me to know?
         </Label>
         <Input id="notes" name="notes" />
       </div>

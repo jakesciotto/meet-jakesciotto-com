@@ -23,7 +23,9 @@ export default async function SuccessPage({ params }: Props) {
   const supabase = serviceClient();
   const { data, error } = await supabase
     .from("bookings")
-    .select("invitee_name, invitee_email, starts_at, conferencing, cancelled_at")
+    .select(
+      "invitee_name, invitee_email, starts_at, conferencing, cancelled_at",
+    )
     .eq("id", id)
     .single();
   if (error || !data) notFound();
@@ -31,17 +33,21 @@ export default async function SuccessPage({ params }: Props) {
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">
       <div className="space-y-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">You&rsquo;re booked.</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          You&rsquo;re booked.
+        </h1>
         <p className="text-base">
           {data.invitee_name}, your meeting is set for{" "}
           <strong>{formatWhen(data.starts_at)}</strong>.
         </p>
         <p className="text-sm text-muted-foreground">
-          A confirmation email is on its way to {data.invitee_email}. If you don&rsquo;t see it,
-          check your spam folder.
+          A confirmation email is on its way to {data.invitee_email}. If you
+          don&rsquo;t see it, check your spam folder.
         </p>
         {data.cancelled_at && (
-          <p className="text-sm font-medium text-destructive">This booking has been cancelled.</p>
+          <p className="text-sm font-medium text-destructive">
+            This booking has been cancelled.
+          </p>
         )}
         <div className="space-y-2">
           <Button asChild variant="outline" className="w-full">

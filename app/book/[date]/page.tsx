@@ -41,7 +41,7 @@ export default async function SlotsPage({ params }: Props) {
       <div className="anim-in-fade-up">
         <div className="mb-6 flex items-center justify-between">
           <Button asChild variant="ghost" size="sm">
-            <Link href="/">← Pick a different date</Link>
+            <Link href="/">← pick a different date</Link>
           </Button>
         </div>
         <header className="mb-6 space-y-1">
