@@ -261,7 +261,7 @@ export function BookingForm({
       </div>
 
       <Button type="submit" size="lg" className="w-full" disabled={pending}>
-        {pending ? "Booking…" : "Confirm booking"}
+        {pending ? "booking…" : "confirm booking"}
       </Button>
     </form>
   );

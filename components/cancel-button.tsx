@@ -37,7 +37,7 @@ export function CancelBookingButton({ bookingId }: { bookingId: string }) {
         onClick={onClick}
         disabled={pending}
       >
-        {pending ? "Cancelling…" : "Cancel booking"}
+        {pending ? "cancelling…" : "cancel booking"}
       </Button>
     </div>
   );
