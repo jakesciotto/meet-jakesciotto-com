@@ -24,9 +24,15 @@ export type CreateBookingInput = z.infer<typeof InputSchema>;
 
 export type CreateBookingResult =
   | { ok: true; bookingId: string }
-  | { ok: false; error: "slot_taken" | "validation" | "unknown"; message: string };
+  | {
+      ok: false;
+      error: "slot_taken" | "validation" | "unknown";
+      message: string;
+    };
 
-export async function createBooking(rawInput: CreateBookingInput): Promise<CreateBookingResult> {
+export async function createBooking(
+  rawInput: CreateBookingInput,
+): Promise<CreateBookingResult> {
   const parsed = InputSchema.safeParse(rawInput);
   if (!parsed.success) {
     return { ok: false, error: "validation", message: parsed.error.message };
@@ -34,16 +40,30 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
   const input = parsed.data;
 
   if (input.conferencing === "phone" && !input.phone) {
-    return { ok: false, error: "validation", message: "Phone number is required for phone calls." };
+    return {
+      ok: false,
+      error: "validation",
+      message: "Phone number is required for phone calls.",
+    };
   }
   if (input.conferencing === "other" && !input.meetingLink) {
-    return { ok: false, error: "validation", message: "Please paste your meeting link." };
+    return {
+      ok: false,
+      error: "validation",
+      message: "Please paste your meeting link.",
+    };
   }
 
   const slots = await getSlots(input.date);
-  const stillFree = slots.some((s) => s.startsAt.toISOString() === input.startIso);
+  const stillFree = slots.some(
+    (s) => s.startsAt.toISOString() === input.startIso,
+  );
   if (!stillFree) {
-    return { ok: false, error: "slot_taken", message: "That time was just taken. Pick another." };
+    return {
+      ok: false,
+      error: "slot_taken",
+      message: "That time was just taken. Pick another.",
+    };
   }
 
   const startsAt = new Date(input.startIso);
@@ -75,7 +95,8 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
     return {
       ok: false,
       error: "unknown",
-      message: "We couldn't create the calendar event. Try again, or pick another time.",
+      message:
+        "We couldn't create the calendar event. Try again, or pick another time.",
     };
   }
 
@@ -97,11 +118,15 @@ export async function createBooking(rawInput: CreateBookingInput): Promise<Creat
     .single();
 
   if (insertError || !inserted) {
-    console.error("Inserted Google event but failed to write audit row", insertError);
+    console.error(
+      "Inserted Google event but failed to write audit row",
+      insertError,
+    );
     return {
       ok: false,
       error: "unknown",
-      message: "Booking partially succeeded. Contact Jake directly to confirm.",
+      message:
+        "booking partially succeeded. jake probably botched something in the code. reach out to him to confirm.",
     };
   }
 
