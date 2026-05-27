@@ -53,11 +53,14 @@ export async function exchangeCode(code: string): Promise<{
 }
 
 /** Build an authenticated client using the stored admin refresh token. */
-async function getAdminCalendarClient(): Promise<calendar_v3.Calendar> {
+async function getAdminCalendarClient(): Promise<{
+  calendar: calendar_v3.Calendar;
+  email: string;
+}> {
   const supabase = serviceClient();
   const { data, error } = await supabase
     .from("admin_google_oauth")
-    .select("refresh_token")
+    .select("refresh_token, email")
     .single();
 
   if (error || !data) {
@@ -66,12 +69,15 @@ async function getAdminCalendarClient(): Promise<calendar_v3.Calendar> {
 
   const client = getOAuthClient();
   client.setCredentials({ refresh_token: data.refresh_token });
-  return google.calendar({ version: "v3", auth: client });
+  return {
+    calendar: google.calendar({ version: "v3", auth: client }),
+    email: data.email,
+  };
 }
 
 /** Query Google free/busy for the admin's primary calendar over a single date range. */
 export async function getFreeBusy(timeMinIso: string, timeMaxIso: string): Promise<BusyRange[]> {
-  const calendar = await getAdminCalendarClient();
+  const { calendar } = await getAdminCalendarClient();
   const { data } = await calendar.freebusy.query({
     requestBody: {
       timeMin: timeMinIso,
@@ -103,7 +109,7 @@ export type InsertEventResult = {
 };
 
 export async function insertEvent(input: InsertEventInput): Promise<InsertEventResult> {
-  const calendar = await getAdminCalendarClient();
+  const { calendar, email: adminEmail } = await getAdminCalendarClient();
   const requestId = crypto.randomUUID();
 
   let description = input.description;
@@ -111,7 +117,15 @@ export async function insertEvent(input: InsertEventInput): Promise<InsertEventR
     summary: input.summary,
     start: { dateTime: input.startsAt.toISOString() },
     end: { dateTime: input.endsAt.toISOString() },
-    attendees: [{ email: input.attendeeEmail, displayName: input.attendeeName }],
+    attendees: [
+      {
+        email: adminEmail,
+        self: true,
+        organizer: true,
+        responseStatus: "accepted",
+      },
+      { email: input.attendeeEmail, displayName: input.attendeeName },
+    ],
   };
 
   if (input.conferencing === "meet") {
@@ -146,7 +160,7 @@ export async function insertEvent(input: InsertEventInput): Promise<InsertEventR
 }
 
 export async function deleteEvent(eventId: string): Promise<void> {
-  const calendar = await getAdminCalendarClient();
+  const { calendar } = await getAdminCalendarClient();
   await calendar.events.delete({
     calendarId: "primary",
     eventId,
