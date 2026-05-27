@@ -34,27 +34,32 @@ export default async function SuccessPage({ params }: Props) {
     <main className="mx-auto max-w-2xl px-4 py-12">
       <div className="space-y-6 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">
-          You&rsquo;re booked.
+          you&rsquo;re booked. how cool.
         </h1>
         <p className="text-base">
           {data.invitee_name}, your meeting is set for{" "}
           <strong>{formatWhen(data.starts_at)}</strong>.
         </p>
         <p className="text-sm text-muted-foreground">
-          A confirmation email is on its way to {data.invitee_email}. If you
-          don&rsquo;t see it, check your spam folder.
+          this very cool site sent you a confirmation email to{" "}
+          {data.invitee_email}. if you don&rsquo;t see it, check your spam
+          folder or some shit. i don't know.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          if you answered "yes" to if pie charts are cool or not, be prepared to
+          defend that bullshit.
         </p>
         {data.cancelled_at && (
           <p className="text-sm font-medium text-destructive">
-            This booking has been cancelled.
+            this booking has been cancelled.
           </p>
         )}
-        <div className="space-y-2">
-          <Button asChild variant="outline" className="w-full">
-            <Link href={`/book/cancel/${id}`}>Cancel this booking</Link>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+          <Button asChild variant="secondary" size="lg">
+            <Link href={`/book/cancel/${id}`}>cancel this booking</Link>
           </Button>
-          <Button asChild variant="ghost" className="w-full">
-            <Link href="/">Book another time</Link>
+          <Button asChild variant="outline" size="lg">
+            <Link href="/">book another time</Link>
           </Button>
         </div>
       </div>

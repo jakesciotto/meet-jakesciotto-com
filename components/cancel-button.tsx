@@ -34,6 +34,7 @@ export function CancelBookingButton({ bookingId }: { bookingId: string }) {
         type="button"
         variant="destructive"
         className="w-full"
+        size="lg"
         onClick={onClick}
         disabled={pending}
       >

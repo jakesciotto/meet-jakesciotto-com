@@ -32,10 +32,15 @@ export default async function CancelPage({ params }: Props) {
   if (data.cancelled_at) {
     return (
       <main className="mx-auto max-w-2xl px-4 py-12 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Already cancelled</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Already cancelled
+        </h1>
         <p className="mt-4 text-sm text-muted-foreground">
-          This booking was cancelled.{" "}
-          <Link href="/" className="underline">Book another time</Link>.
+          this booking was cancelled.{" "}
+          <Link href="/" className="underline">
+            book another time
+          </Link>
+          .
         </p>
       </main>
     );
@@ -44,15 +49,18 @@ export default async function CancelPage({ params }: Props) {
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">
       <div className="space-y-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Cancel this booking?</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          cancel this booking?
+        </h1>
         <p>
-          Your meeting on <strong>{formatWhen(data.starts_at)}</strong> will be cancelled and
-          everyone will be notified.
+          your meeting on <strong>{formatWhen(data.starts_at)}</strong> will be
+          cancelled and everyone will be incredibly disappointed and talk about
+          it behind your back.
         </p>
-        <div className="space-y-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           <CancelBookingButton bookingId={id} />
-          <Button asChild variant="ghost" className="w-full">
-            <Link href={`/book/success/${id}`}>Keep the booking</Link>
+          <Button asChild variant="outline" className="w-full" size="lg">
+            <Link href={`/book/success/${id}`}>keep the booking</Link>
           </Button>
         </div>
       </div>
