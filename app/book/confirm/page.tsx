@@ -12,12 +12,16 @@ function formatHeader(startIso: string): string {
     month: "long",
     day: "numeric",
     timeZone: config.hostTz,
-  }).format(new Date(startIso));
+  })
+    .format(new Date(startIso))
+    .toLowerCase();
   const time = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "2-digit",
     timeZone: config.hostTz,
-  }).format(new Date(startIso));
+  })
+    .format(new Date(startIso))
+    .toLowerCase();
   return `${day} at ${time}`;
 }
 
