@@ -4,7 +4,7 @@ export const config = {
   slotAlignmentMinutes: 30,
   minNoticeHours: 24,
   horizonDays: 60,
-  adminEmail: process.env.ADMIN_EMAIL ?? "jake.sciotto@gmail.com",
+  adminEmail: requireEnv("ADMIN_EMAIL"),
   appUrl: process.env.APP_URL ?? "http://localhost:3000",
 } as const;
 
