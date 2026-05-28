@@ -52,3 +52,6 @@ next-env.d.ts
 .eslintcache
 
 .claude
+
+# supabase (schema kept private from public repo)
+/supabase
