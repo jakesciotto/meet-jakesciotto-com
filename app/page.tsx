@@ -83,9 +83,9 @@ export default async function HomePage() {
   const data = await loadHomeData();
   return (
     <main className="mx-auto flex min-h-svh max-w-2xl flex-col justify-center px-4 py-10">
-      <div className="anim-in-fade-up space-y-6">
+      <div className="space-y-6 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
         <header className="space-y-1 text-center">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+          <h1 className="font-mono text-2xl font-semibold tracking-tight lowercase sm:text-3xl">
             book a meeting
           </h1>
           <p className="text-sm text-muted-foreground">

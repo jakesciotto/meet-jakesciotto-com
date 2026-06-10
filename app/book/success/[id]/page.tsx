@@ -33,12 +33,15 @@ export default async function SuccessPage({ params }: Props) {
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">
       <div className="space-y-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="text-2xl font-semibold tracking-tight text-signal">
           you&rsquo;re booked. how cool.
         </h1>
         <p className="text-base">
           {data.invitee_name}, your meeting is set for{" "}
-          <strong>{formatWhen(data.starts_at)}</strong>.
+          <strong className="font-mono tracking-tight lowercase">
+            {formatWhen(data.starts_at)}
+          </strong>
+          .
         </p>
         <p className="text-sm text-muted-foreground">
           this very cool site sent you a confirmation email to{" "}

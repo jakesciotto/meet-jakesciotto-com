@@ -41,8 +41,12 @@ export default async function AdminPage() {
     <main className="mx-auto max-w-3xl px-4 py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Admin</h1>
-          <p className="text-sm text-muted-foreground">Signed in as {session.email}</p>
+          <h1 className="font-mono text-xl font-semibold tracking-widest uppercase">
+            Admin
+          </h1>
+          <p className="font-mono text-sm text-muted-foreground">
+            Signed in as {session.email}
+          </p>
         </div>
         <form action={adminLogout}>
           <Button type="submit" variant="outline" size="sm">
@@ -52,7 +56,9 @@ export default async function AdminPage() {
       </header>
 
       <section className="mb-10 space-y-3">
-        <h2 className="text-lg font-medium">Weekly availability</h2>
+        <h2 className="border-b border-primary/20 pb-1 font-mono text-sm font-medium tracking-widest text-muted-foreground uppercase">
+          Weekly availability
+        </h2>
         <p className="text-sm text-muted-foreground">
           Each day can have one or more windows. Slots are generated in 30-minute increments
           within each window.
@@ -61,7 +67,9 @@ export default async function AdminPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium">Blocked dates</h2>
+        <h2 className="border-b border-primary/20 pb-1 font-mono text-sm font-medium tracking-widest text-muted-foreground uppercase">
+          Blocked dates
+        </h2>
         <p className="text-sm text-muted-foreground">
           Block individual days (vacation, holidays) regardless of weekly availability.
         </p>
