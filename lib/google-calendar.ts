@@ -1,5 +1,5 @@
 import { google, type calendar_v3 } from "googleapis";
-import { requireEnv } from "./config";
+import { config, requireEnv } from "./config";
 import { serviceClient } from "./supabase";
 import type { BusyRange } from "./slots";
 
@@ -115,8 +115,8 @@ export async function insertEvent(input: InsertEventInput): Promise<InsertEventR
   let description = input.description;
   const requestBody: calendar_v3.Schema$Event = {
     summary: input.summary,
-    start: { dateTime: input.startsAt.toISOString() },
-    end: { dateTime: input.endsAt.toISOString() },
+    start: { dateTime: input.startsAt.toISOString(), timeZone: config.hostTz },
+    end: { dateTime: input.endsAt.toISOString(), timeZone: config.hostTz },
     attendees: [
       {
         email: adminEmail,

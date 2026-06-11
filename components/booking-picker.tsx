@@ -123,7 +123,7 @@ export function BookingPicker({
           className="space-y-3 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500"
         >
           <div className="flex items-baseline justify-between gap-3 border-b border-primary/20 pb-2">
-            <h2 className="font-mono text-base font-medium tracking-tight lowercase">
+            <h2 className="text-base font-medium tracking-tight lowercase">
               {formatDateHeader(selectedDate)}
             </h2>
             <Button
@@ -197,7 +197,7 @@ function SlotPanel({
             <Button
               asChild
               variant="outline"
-              className="h-12 w-full justify-center font-mono text-base tracking-tight transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-sm"
+              className="h-12 w-full justify-center text-base tracking-tight transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-sm"
             >
               <Link
                 href={{

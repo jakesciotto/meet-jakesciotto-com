@@ -41,10 +41,10 @@ export default async function AdminPage() {
     <main className="mx-auto max-w-3xl px-4 py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-mono text-xl font-semibold tracking-widest uppercase">
+          <h1 className="text-xl font-semibold tracking-tight">
             Admin
           </h1>
-          <p className="font-mono text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Signed in as {session.email}
           </p>
         </div>
@@ -56,7 +56,7 @@ export default async function AdminPage() {
       </header>
 
       <section className="mb-10 space-y-3">
-        <h2 className="border-b border-primary/20 pb-1 font-mono text-sm font-medium tracking-widest text-muted-foreground uppercase">
+        <h2 className="border-b border-primary/20 pb-1 text-sm font-medium text-muted-foreground">
           Weekly availability
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -67,7 +67,7 @@ export default async function AdminPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="border-b border-primary/20 pb-1 font-mono text-sm font-medium tracking-widest text-muted-foreground uppercase">
+        <h2 className="border-b border-primary/20 pb-1 text-sm font-medium text-muted-foreground">
           Blocked dates
         </h2>
         <p className="text-sm text-muted-foreground">

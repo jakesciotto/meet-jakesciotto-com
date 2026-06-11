@@ -21,7 +21,7 @@ export function SlotList({ date, slots }: { date: string; slots: SlotListItem[] 
           <Button
             asChild
             variant="outline"
-            className="h-12 w-full justify-center font-mono text-base tracking-tight transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-sm"
+            className="h-12 w-full justify-center text-base tracking-tight transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-sm"
           >
             <Link
               href={{

@@ -55,9 +55,8 @@ export async function createBooking(
   }
 
   const slots = await getSlots(input.date);
-  const stillFree = slots.some(
-    (s) => s.startsAt.toISOString() === input.startIso,
-  );
+  const startMs = new Date(input.startIso).getTime();
+  const stillFree = slots.some((s) => s.startsAt.getTime() === startMs);
   if (!stillFree) {
     return {
       ok: false,

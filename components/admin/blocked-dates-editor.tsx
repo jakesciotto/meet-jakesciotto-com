@@ -55,7 +55,6 @@ export function BlockedDatesEditor({ initial }: { initial: BlockedDate[] }) {
             <Input
               id="blocked-date"
               type="date"
-              className="font-mono"
               value={newDate}
               onChange={(e) => setNewDate(e.target.value)}
             />
@@ -83,7 +82,7 @@ export function BlockedDatesEditor({ initial }: { initial: BlockedDate[] }) {
         {dates.map((d) => (
           <li key={d.date} className="flex items-center justify-between px-4 py-3">
             <div>
-              <span className="font-mono font-medium">{d.date}</span>
+              <span className="font-medium">{d.date}</span>
               {d.note && <span className="ml-3 text-sm text-muted-foreground">{d.note}</span>}
             </div>
             <Button

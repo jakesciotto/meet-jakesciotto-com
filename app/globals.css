@@ -1,30 +1,30 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Mission Control: dark only. Amber = actions/chrome/focus; signal green = live/selected/success. */
+/* Mission Control: dark only, portfolio arctic-ice palette. Cyan = actions/chrome/focus; signal green = live/selected/success. */
 :root {
-  --background: oklch(0.11 0.004 95);
-  --foreground: oklch(0.94 0.012 88);
-  --card: oklch(0.145 0.006 92);
-  --card-foreground: oklch(0.94 0.012 88);
-  --popover: oklch(0.145 0.006 92);
-  --popover-foreground: oklch(0.94 0.012 88);
-  --primary: oklch(0.8 0.16 75);
-  --primary-foreground: oklch(0.15 0.03 75);
-  --secondary: oklch(0.2 0.012 88);
-  --secondary-foreground: oklch(0.94 0.012 88);
-  --muted: oklch(0.18 0.01 90);
-  --muted-foreground: oklch(0.62 0.025 85);
-  --accent: oklch(0.2 0.012 88);
-  --accent-foreground: oklch(0.94 0.012 88);
-  --destructive: oklch(0.62 0.21 27);
+  --background: oklch(0.169 0.025 265.2);
+  --foreground: oklch(0.941 0.015 260.7);
+  --card: oklch(0.193 0.030 265.9);
+  --card-foreground: oklch(0.941 0.015 260.7);
+  --popover: oklch(0.193 0.030 265.9);
+  --popover-foreground: oklch(0.941 0.015 260.7);
+  --primary: oklch(0.797 0.134 211.5);
+  --primary-foreground: oklch(0.169 0.025 265.2);
+  --secondary: oklch(0.252 0.037 261.7);
+  --secondary-foreground: oklch(0.941 0.015 260.7);
+  --muted: oklch(0.252 0.037 261.7);
+  --muted-foreground: oklch(0.685 0.041 259.3);
+  --accent: oklch(0.252 0.037 261.7);
+  --accent-foreground: oklch(0.941 0.015 260.7);
+  --destructive: oklch(0.637 0.208 25.3);
   --destructive-foreground: oklch(0.97 0 0);
-  --border: oklch(0.27 0.022 85);
-  --input: oklch(0.27 0.022 85);
-  --ring: oklch(0.8 0.16 75);
-  --signal: oklch(0.85 0.19 160);
-  --signal-foreground: oklch(0.15 0.04 160);
-  --radius: 0.125rem;
+  --border: oklch(0.281 0.046 261.3);
+  --input: oklch(0.281 0.046 261.3);
+  --ring: oklch(0.797 0.134 211.5);
+  --signal: oklch(0.8 0.13 160);
+  --signal-foreground: oklch(0.15 0.03 160);
+  --radius: 0.625rem;
 }
 
 @theme inline {
