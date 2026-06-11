@@ -1,56 +1,30 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* --- Light theme (default): warm ivory paper --- */
+/* Mission Control: dark only. Amber = actions/chrome/focus; signal green = live/selected/success. */
 :root {
-  --background: oklch(0.99 0.006 85);
-  --foreground: oklch(0.2 0.018 250);
-  --card: oklch(0.985 0.004 85);
-  --card-foreground: oklch(0.2 0.018 250);
-  --popover: oklch(0.99 0.006 85);
-  --popover-foreground: oklch(0.2 0.018 250);
-  --primary: oklch(0.42 0.13 158);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.955 0.008 85);
-  --secondary-foreground: oklch(0.2 0.018 250);
-  --muted: oklch(0.955 0.008 85);
-  --muted-foreground: oklch(0.5 0.015 250);
-  --accent: oklch(0.955 0.008 85);
-  --accent-foreground: oklch(0.2 0.018 250);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.9 0.01 80);
-  --input: oklch(0.9 0.01 80);
-  --ring: oklch(0.6 0.1 158);
-  --radius: 0.625rem;
-
-  /* Brand: Supabase green. */
-  --brand-green: #21f294;
-}
-
-/* --- Dark theme (follows system preference): deep navy with warm white --- */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: oklch(0.14 0.014 248);
-    --foreground: oklch(0.96 0.005 80);
-    --card: oklch(0.195 0.011 248);
-    --card-foreground: oklch(0.96 0.005 80);
-    --popover: oklch(0.195 0.011 248);
-    --popover-foreground: oklch(0.96 0.005 80);
-    --primary: oklch(0.81 0.18 158); /* Supabase-ish green */
-    --primary-foreground: oklch(0.14 0.014 248);
-    --secondary: oklch(0.26 0.011 248);
-    --secondary-foreground: oklch(0.96 0.005 80);
-    --muted: oklch(0.23 0.011 248);
-    --muted-foreground: oklch(0.7 0.008 80);
-    --accent: oklch(0.26 0.011 248);
-    --accent-foreground: oklch(0.96 0.005 80);
-    --destructive: oklch(0.65 0.22 27);
-    --destructive-foreground: oklch(0.97 0 0);
-    --border: oklch(0.29 0.012 248);
-    --input: oklch(0.29 0.012 248);
-    --ring: oklch(0.81 0.18 158);
-  }
+  --background: oklch(0.11 0.004 95);
+  --foreground: oklch(0.94 0.012 88);
+  --card: oklch(0.145 0.006 92);
+  --card-foreground: oklch(0.94 0.012 88);
+  --popover: oklch(0.145 0.006 92);
+  --popover-foreground: oklch(0.94 0.012 88);
+  --primary: oklch(0.8 0.16 75);
+  --primary-foreground: oklch(0.15 0.03 75);
+  --secondary: oklch(0.2 0.012 88);
+  --secondary-foreground: oklch(0.94 0.012 88);
+  --muted: oklch(0.18 0.01 90);
+  --muted-foreground: oklch(0.62 0.025 85);
+  --accent: oklch(0.2 0.012 88);
+  --accent-foreground: oklch(0.94 0.012 88);
+  --destructive: oklch(0.62 0.21 27);
+  --destructive-foreground: oklch(0.97 0 0);
+  --border: oklch(0.27 0.022 85);
+  --input: oklch(0.27 0.022 85);
+  --ring: oklch(0.8 0.16 75);
+  --signal: oklch(0.85 0.19 160);
+  --signal-foreground: oklch(0.15 0.04 160);
+  --radius: 0.125rem;
 }
 
 @theme inline {
@@ -73,6 +47,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -81,110 +57,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Token plumbing only: un-colored `border` utilities resolve to the border token. */
 @layer base {
   * {
     border-color: var(--border);
-  }
-  html,
-  body {
-    min-height: 100svh;
-  }
-  body {
-    color: var(--foreground);
-    font-family:
-      var(--font-sans),
-      system-ui,
-      -apple-system,
-      sans-serif;
-    background-color: var(--background);
-    /* Soft brand-green wash, top-left and top-right. */
-    background-image:
-      radial-gradient(
-        ellipse 70% 45% at 15% -5%,
-        color-mix(in oklab, var(--brand-green) 9%, transparent),
-        transparent 72%
-      ),
-      radial-gradient(
-        ellipse 55% 38% at 100% 0%,
-        color-mix(in oklab, var(--brand-green) 6%, transparent),
-        transparent 70%
-      );
-    background-attachment: fixed;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    body {
-      background-image:
-        radial-gradient(
-          ellipse 80% 50% at 18% -10%,
-          color-mix(in oklab, var(--brand-green) 16%, transparent),
-          transparent 72%
-        ),
-        radial-gradient(
-          ellipse 60% 40% at 100% 0%,
-          color-mix(in oklab, var(--brand-green) 10%, transparent),
-          transparent 70%
-        );
-    }
-  }
-
-  /* Pointer cursor on anything interactive. shadcn/Tailwind drop these by default. */
-  button:not(:disabled),
-  a,
-  [role="button"]:not([aria-disabled="true"]),
-  label[for],
-  summary,
-  [tabindex]:not([tabindex="-1"]) {
-    cursor: pointer;
-  }
-}
-
-/* --- Entrance animations (respect prefers-reduced-motion) --- */
-@media (prefers-reduced-motion: no-preference) {
-  @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  .anim-in-fade {
-    animation: fade-in 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  }
-
-  .anim-in-fade-up {
-    animation: fade-in-up 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  }
-
-  /* Calendar entrance: blur + scale + fade-up. */
-  @keyframes calendar-zoom-in {
-    from {
-      opacity: 0;
-      transform: scale(0.96) translateY(8px);
-      filter: blur(6px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-      filter: blur(0);
-    }
-  }
-
-  [data-slot="calendar"] {
-    animation: calendar-zoom-in 520ms cubic-bezier(0.16, 0.84, 0.32, 1) both;
-    transform-origin: top center;
   }
 }

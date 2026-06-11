@@ -101,7 +101,7 @@ export function BookingPicker({
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-border/60 bg-card p-2 sm:p-3">
+      <div className="rounded-sm border border-primary/25 bg-card p-2 shadow-[inset_0_0_60px_color-mix(in_oklab,var(--primary)_4%,transparent)] sm:p-3">
         <Calendar
           mode="single"
           onSelect={onDateSelect}
@@ -118,9 +118,12 @@ export function BookingPicker({
         />
       </div>
       {selectedDate && (
-        <div key={selectedDate} className="anim-in-fade-up space-y-3">
-          <div className="flex items-baseline justify-between gap-3 border-b border-border/50 pb-2">
-            <h2 className="text-lg font-medium tracking-tight">
+        <div
+          key={selectedDate}
+          className="space-y-3 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500"
+        >
+          <div className="flex items-baseline justify-between gap-3 border-b border-primary/20 pb-2">
+            <h2 className="font-mono text-base font-medium tracking-tight lowercase">
               {formatDateHeader(selectedDate)}
             </h2>
             <Button
@@ -174,7 +177,7 @@ function SlotPanel({
 
   if (slots.length === 0) {
     return (
-      <p className="anim-in-fade rounded-lg border bg-card p-4 text-sm text-muted-foreground">
+      <p className="rounded-lg border bg-card p-4 text-sm text-muted-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300">
         No times available on this day. Try another date.
       </p>
     );
@@ -188,7 +191,7 @@ function SlotPanel({
         return (
           <li
             key={iso}
-            className="anim-in-fade-up"
+            className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:fill-mode-backwards motion-safe:duration-500"
             style={{ animationDelay: `${delay}ms` }}
           >
             <Button

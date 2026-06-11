@@ -9,7 +9,7 @@ export type SlotListItem = {
 export function SlotList({ date, slots }: { date: string; slots: SlotListItem[] }) {
   if (slots.length === 0) {
     return (
-      <p className="anim-in-fade rounded-lg border bg-card p-4 text-sm text-muted-foreground">
+      <p className="rounded-lg border bg-card p-4 text-sm text-muted-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300">
         No times available on this day. Try another date.
       </p>
     );
@@ -21,7 +21,7 @@ export function SlotList({ date, slots }: { date: string; slots: SlotListItem[] 
           <Button
             asChild
             variant="outline"
-            className="h-12 w-full justify-center text-base transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-sm"
+            className="h-12 w-full justify-center font-mono text-base tracking-tight transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-sm"
           >
             <Link
               href={{

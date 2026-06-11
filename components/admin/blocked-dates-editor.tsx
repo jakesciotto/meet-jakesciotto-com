@@ -48,13 +48,14 @@ export function BlockedDatesEditor({ initial }: { initial: BlockedDate[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border bg-card p-4">
+      <div className="rounded-sm border border-primary/20 bg-card p-4">
         <div className="grid gap-3 sm:grid-cols-[160px_1fr_auto] sm:items-end">
           <div className="space-y-1">
             <Label htmlFor="blocked-date">Date</Label>
             <Input
               id="blocked-date"
               type="date"
+              className="font-mono"
               value={newDate}
               onChange={(e) => setNewDate(e.target.value)}
             />
@@ -75,14 +76,14 @@ export function BlockedDatesEditor({ initial }: { initial: BlockedDate[] }) {
         {status && <p className="mt-2 text-sm text-destructive">{status}</p>}
       </div>
 
-      <ul className="divide-y rounded-lg border bg-card">
+      <ul className="divide-y rounded-sm border border-primary/20 bg-card">
         {dates.length === 0 && (
           <li className="px-4 py-3 text-sm text-muted-foreground">No blocked dates.</li>
         )}
         {dates.map((d) => (
           <li key={d.date} className="flex items-center justify-between px-4 py-3">
             <div>
-              <span className="font-medium">{d.date}</span>
+              <span className="font-mono font-medium">{d.date}</span>
               {d.note && <span className="ml-3 text-sm text-muted-foreground">{d.note}</span>}
             </div>
             <Button
