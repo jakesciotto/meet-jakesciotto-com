@@ -6,12 +6,11 @@ import { getFreeBusy } from "@/lib/google-calendar";
 import { computeSlots, type AvailabilityRule, type BusyRange, type Slot } from "@/lib/slots";
 import { getCachedSlots, setCachedSlots } from "@/lib/slots-cache";
 import { config } from "@/lib/config";
-import { weekdayOf } from "@/lib/dates";
+import { addDays, weekdayOf } from "@/lib/dates";
 
 function dayBoundsUtc(date: string, tz: string): { startIso: string; endIso: string } {
   const start = fromZonedTime(`${date}T00:00:00`, tz);
-  const end = fromZonedTime(`${date}T00:00:00`, tz);
-  end.setUTCDate(end.getUTCDate() + 1);
+  const end = fromZonedTime(`${addDays(date, 1)}T00:00:00`, tz);
   return { startIso: start.toISOString(), endIso: end.toISOString() };
 }
 

@@ -38,7 +38,7 @@ export default async function SuccessPage({ params }: Props) {
         </h1>
         <p className="text-base">
           {data.invitee_name}, your meeting is set for{" "}
-          <strong className="font-mono tracking-tight lowercase">
+          <strong className="tracking-tight lowercase">
             {formatWhen(data.starts_at)}
           </strong>
           .

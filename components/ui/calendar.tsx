@@ -89,7 +89,7 @@ function Calendar({
           defaultClassNames.dropdown,
         ),
         caption_label: cn(
-          "font-medium select-none text-(length:--cal-caption-text)",
+          "font-medium select-none lowercase text-(length:--cal-caption-text)",
           captionLayout === "label"
             ? ""
             : "flex items-center gap-1 rounded-(--cell-radius) [&>svg]:size-3.5 [&>svg]:text-muted-foreground",
@@ -97,7 +97,7 @@ function Calendar({
         ),
         weekdays: cn("flex", defaultClassNames.weekdays),
         weekday: cn(
-          "flex-1 rounded-(--cell-radius) font-mono text-(length:--cal-weekday-text) font-normal text-muted-foreground select-none",
+          "flex-1 rounded-(--cell-radius) lowercase text-(length:--cal-weekday-text) font-normal text-muted-foreground select-none",
           defaultClassNames.weekday,
         ),
         week: cn("mt-2 flex w-full", defaultClassNames.week),
@@ -223,7 +223,7 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 font-mono leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-end=true]:bg-signal data-[range-end=true]:text-signal-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) data-[range-start=true]:bg-signal data-[range-start=true]:text-signal-foreground data-[selected-single=true]:bg-signal data-[selected-single=true]:text-signal-foreground data-[selected-single=true]:shadow-[0_0_12px_color-mix(in_oklab,var(--signal)_30%,transparent)] data-[selected-single=true]:group-data-[focused=true]/day:border-signal/60 data-[selected-single=true]:group-data-[focused=true]/day:ring-signal/40 hover:text-foreground [&>span]:text-xs [&>span]:opacity-70",
+        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-end=true]:bg-signal data-[range-end=true]:text-signal-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) data-[range-start=true]:bg-signal data-[range-start=true]:text-signal-foreground data-[selected-single=true]:bg-signal data-[selected-single=true]:text-signal-foreground data-[selected-single=true]:shadow-[0_0_12px_color-mix(in_oklab,var(--signal)_30%,transparent)] data-[selected-single=true]:group-data-[focused=true]/day:border-signal/60 data-[selected-single=true]:group-data-[focused=true]/day:ring-signal/40 hover:text-foreground [&>span]:text-xs [&>span]:opacity-70",
         defaultClassNames.day,
         className,
       )}

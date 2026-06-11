@@ -54,7 +54,7 @@ export default async function CancelPage({ params }: Props) {
         </h1>
         <p>
           your meeting on{" "}
-          <strong className="font-mono tracking-tight lowercase">
+          <strong className="tracking-tight lowercase">
             {formatWhen(data.starts_at)}
           </strong>{" "}
           will be

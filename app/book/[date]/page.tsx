@@ -45,7 +45,7 @@ export default async function SlotsPage({ params }: Props) {
           </Button>
         </div>
         <header className="mb-6 space-y-1">
-          <h1 className="border-b border-primary/20 pb-2 font-mono text-lg font-semibold tracking-tight lowercase">
+          <h1 className="border-b border-primary/20 pb-2 text-lg font-semibold tracking-tight lowercase">
             {formatHeader(date)}
           </h1>
           <p className="text-sm text-muted-foreground">
