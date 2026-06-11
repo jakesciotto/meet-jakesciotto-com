@@ -53,7 +53,11 @@ export default async function CancelPage({ params }: Props) {
           cancel this booking?
         </h1>
         <p>
-          your meeting on <strong>{formatWhen(data.starts_at)}</strong> will be
+          your meeting on{" "}
+          <strong className="font-mono tracking-tight lowercase">
+            {formatWhen(data.starts_at)}
+          </strong>{" "}
+          will be
           cancelled and everyone will be incredibly disappointed and talk about
           it behind your back.
         </p>

@@ -73,11 +73,19 @@ function WeekdayRow({
   };
 
   return (
-    <div className="rounded-lg border bg-card p-4">
+    <div className="rounded-sm border border-primary/20 bg-card p-4">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="font-medium">{name}</h3>
+        <h3 className="font-mono font-medium">{name}</h3>
         <div className="flex items-center gap-2 text-sm">
-          {status && <span className="text-muted-foreground">{status}</span>}
+          {status && (
+            <span
+              className={
+                status === "Saved" ? "text-signal" : "text-destructive"
+              }
+            >
+              {status}
+            </span>
+          )}
           <Button type="button" variant="outline" size="sm" onClick={add}>
             Add window
           </Button>
@@ -103,7 +111,7 @@ function WeekdayRow({
               onChange={(e) =>
                 update(i, { startMinute: timeToMinutes(e.target.value) })
               }
-              className="w-32"
+              className="w-32 font-mono"
             />
             <span aria-hidden>—</span>
             <Label className="sr-only">End</Label>
@@ -113,7 +121,7 @@ function WeekdayRow({
               onChange={(e) =>
                 update(i, { endMinute: timeToMinutes(e.target.value) })
               }
-              className="w-32"
+              className="w-32 font-mono"
             />
             <Button
               type="button"

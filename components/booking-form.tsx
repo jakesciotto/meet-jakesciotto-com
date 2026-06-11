@@ -111,7 +111,7 @@ export function BookingForm({
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-5">
       {error && (
-        <div className="anim-in-fade-up">
+        <div className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
           <Alert variant="destructive">
             <AlertTitle>we couldn&rsquo;t book that</AlertTitle>
             <AlertDescription>{error}</AlertDescription>

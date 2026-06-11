@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { MailIcon } from "lucide-react";
 import "./globals.css";
@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   description: "Pick a time on Jake's calendar.",
 };
 
+export const viewport: Viewport = {
+  colorScheme: "dark",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,7 +40,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-svh flex-col bg-background bg-fixed font-sans text-foreground [background-image:radial-gradient(ellipse_70%_45%_at_15%_-5%,color-mix(in_oklab,var(--primary)_7%,transparent),transparent_72%)]">
         <nav className="fixed right-3 top-3 z-50 flex items-center gap-0.5 sm:right-5 sm:top-5">
           <a
             href="mailto:jake.s@posthog.com"

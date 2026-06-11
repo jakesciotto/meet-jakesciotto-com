@@ -35,14 +35,14 @@ export default async function ConfirmPage({
 
   return (
     <main className="mx-auto flex min-h-svh max-w-2xl flex-col justify-center px-4 py-10">
-      <div className="anim-in-fade-up">
+      <div className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
         <div className="mb-6">
           <Button asChild variant="ghost" size="sm">
             <Link href={`/?date=${date}`}>← pick a different time</Link>
           </Button>
         </div>
         <header className="mb-6 space-y-1">
-          <h1 className="text-xl font-semibold tracking-tight">
+          <h1 className="border-b border-primary/20 pb-2 font-mono text-lg font-semibold tracking-tight lowercase">
             {formatHeader(start)}
           </h1>
           <p className="text-sm text-muted-foreground">
