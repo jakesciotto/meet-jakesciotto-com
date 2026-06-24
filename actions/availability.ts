@@ -44,24 +44,33 @@ export async function setWeekdayAvailability(
   revalidatePath("/");
 }
 
+const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
 const AddBlockedSchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  dates: z.array(IsoDate).min(1).max(366),
   note: z.string().max(200).optional(),
 });
 
-export async function addBlockedDate(rawInput: z.infer<typeof AddBlockedSchema>): Promise<void> {
+export async function addBlockedDates(rawInput: z.infer<typeof AddBlockedSchema>): Promise<void> {
   await requireAdmin();
-  const { date, note } = AddBlockedSchema.parse(rawInput);
-  const supabase = serviceClient();
-  const { error } = await supabase.from("blocked_dates").upsert({ date, note });
+  const { dates, note } = AddBlockedSchema.parse(rawInput);
+  const rows = dates.map((date) => ({ date, note: note ?? null }));
+  const { error } = await serviceClient().from("blocked_dates").upsert(rows);
   if (error) throw new Error(`Upsert failed: ${error.message}`);
   revalidatePath("/admin");
   revalidatePath("/");
 }
 
-export async function removeBlockedDate(date: string): Promise<void> {
+const RemoveBlockedSchema = z.object({
+  dates: z.array(IsoDate).min(1).max(366),
+});
+
+export async function removeBlockedDates(
+  rawInput: z.infer<typeof RemoveBlockedSchema>
+): Promise<void> {
   await requireAdmin();
-  const { error } = await serviceClient().from("blocked_dates").delete().eq("date", date);
+  const { dates } = RemoveBlockedSchema.parse(rawInput);
+  const { error } = await serviceClient().from("blocked_dates").delete().in("date", dates);
   if (error) throw new Error(`Delete failed: ${error.message}`);
   revalidatePath("/admin");
   revalidatePath("/");

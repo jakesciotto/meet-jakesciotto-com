@@ -71,7 +71,8 @@ export default async function AdminPage() {
           Blocked dates
         </h2>
         <p className="text-sm text-muted-foreground">
-          Block individual days (vacation, holidays) regardless of weekly availability.
+          Block a single day or a date range (vacation, trips, holidays) regardless of weekly
+          availability.
         </p>
         <BlockedDatesEditor initial={dates} />
       </section>

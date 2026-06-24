@@ -27,6 +27,18 @@ export function eachDay(fromInclusive: string, toInclusive: string): string[] {
   return out;
 }
 
+export function parseIsoDate(isoDate: string): Date {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+export function toIsoDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
 function formatYmd(d: Date): string {
   const y = d.getUTCFullYear();
   const m = d.getUTCMonth() + 1;
