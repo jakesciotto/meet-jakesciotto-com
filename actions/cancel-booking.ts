@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { z } from "zod";
 import { serviceClient } from "@/lib/supabase";
 import { deleteEvent } from "@/lib/google-calendar";
+import { sendHostCancellationNotice } from "@/lib/email";
 import { clearSlotsCache } from "@/lib/slots-cache";
 
 const InputSchema = z.object({ bookingId: z.string().uuid() });
@@ -23,7 +25,9 @@ export async function cancelBooking(
   const supabase = serviceClient();
   const { data: booking, error } = await supabase
     .from("bookings")
-    .select("id, google_event_id, cancelled_at")
+    .select(
+      "id, google_event_id, cancelled_at, invitee_name, invitee_company, invitee_email, starts_at, ends_at, conferencing",
+    )
     .eq("id", parsed.data.bookingId)
     .single();
 
@@ -50,6 +54,18 @@ export async function cancelBooking(
   if (updateError) {
     console.error("Cancelled event but failed to mark audit row", updateError);
   }
+
+  after(() =>
+    sendHostCancellationNotice({
+      bookingId: booking.id,
+      inviteeName: booking.invitee_name,
+      inviteeCompany: booking.invitee_company,
+      inviteeEmail: booking.invitee_email,
+      startsAt: new Date(booking.starts_at),
+      endsAt: new Date(booking.ends_at),
+      conferencing: booking.conferencing,
+    }),
+  );
 
   clearSlotsCache();
   revalidatePath("/");
