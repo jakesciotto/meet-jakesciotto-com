@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { z } from "zod";
 import { serviceClient } from "@/lib/supabase";
 import { insertEvent } from "@/lib/google-calendar";
+import { sendHostBookingNotice } from "@/lib/email";
 import { config } from "@/lib/config";
 import { getSlots } from "./get-slots";
 import { clearSlotsCache } from "@/lib/slots-cache";
@@ -128,6 +130,21 @@ export async function createBooking(
         "booking partially succeeded. jake probably botched something in the code. reach out to him to confirm.",
     };
   }
+
+  after(() =>
+    sendHostBookingNotice({
+      bookingId: inserted.id,
+      inviteeName: input.name,
+      inviteeCompany: input.company,
+      inviteeEmail: input.email,
+      startsAt,
+      endsAt,
+      conferencing: input.conferencing,
+      inviteePhone: input.phone,
+      meetingLink: input.meetingLink,
+      notes: input.notes,
+    }),
+  );
 
   clearSlotsCache();
   revalidatePath("/");
