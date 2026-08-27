@@ -4,15 +4,17 @@ import { BookingPicker } from "@/components/booking-picker";
 import { serviceClient } from "@/lib/supabase";
 import { getFreeBusy } from "@/lib/google-calendar";
 import { config } from "@/lib/config";
-import { addDays, eachDay, todayInTz, weekdayOf } from "@/lib/dates";
-import type { AvailabilityRule } from "@/lib/slots";
+import { loadSettings } from "@/lib/settings";
+import { addDays, eachDay, todayInTz } from "@/lib/dates";
+import { rulesForDate, type AvailabilityRule } from "@/lib/slots";
 
 async function loadHomeData() {
   "use cache";
   cacheLife("minutes");
   const supabase = serviceClient();
+  const settings = await loadSettings(supabase);
   const from = todayInTz(config.hostTz);
-  const to = addDays(from, config.horizonDays);
+  const to = addDays(from, settings.horizonDays);
 
   const horizonStart = fromZonedTime(`${from}T00:00:00`, config.hostTz);
   const horizonEnd = fromZonedTime(`${to}T00:00:00`, config.hostTz);
@@ -20,10 +22,15 @@ async function loadHomeData() {
   const horizonStartIso = horizonStart.toISOString();
   const horizonEndIso = horizonEnd.toISOString();
 
-  const [rulesRes, blockedRes, bookingsRes, busyRanges] = await Promise.all([
+  const [rulesRes, overridesRes, blockedRes, bookingsRes, busyRanges] = await Promise.all([
     supabase
       .from("availability_rules")
       .select("weekday, start_minute, end_minute"),
+    supabase
+      .from("date_overrides")
+      .select("date, start_minute, end_minute")
+      .gte("date", from)
+      .lte("date", to),
     supabase
       .from("blocked_dates")
       .select("date")
@@ -39,6 +46,7 @@ async function loadHomeData() {
   ]);
 
   if (rulesRes.error) throw new Error(rulesRes.error.message);
+  if (overridesRes.error) throw new Error(overridesRes.error.message);
   if (blockedRes.error) throw new Error(blockedRes.error.message);
   if (bookingsRes.error) throw new Error(bookingsRes.error.message);
 
@@ -51,10 +59,21 @@ async function loadHomeData() {
     });
   }
 
-  const weekdaysWithRules = new Set(Object.keys(rulesByWeekday).map(Number));
-  const blockedSet = new Set(blockedRes.data.map((b) => b.date));
+  const overridesByDate: Record<string, AvailabilityRule[]> = {};
+  for (const o of overridesRes.data) {
+    (overridesByDate[o.date] ??= []).push({
+      startMinute: o.start_minute,
+      endMinute: o.end_minute,
+    });
+  }
+
+  const sources = {
+    rulesByWeekday,
+    overridesByDate,
+    blockedDates: new Set(blockedRes.data.map((b) => b.date)),
+  };
   const disabledDates = eachDay(from, to).filter(
-    (d) => !weekdaysWithRules.has(weekdayOf(d)) || blockedSet.has(d),
+    (d) => rulesForDate(d, sources).length === 0,
   );
 
   return {
@@ -62,6 +81,7 @@ async function loadHomeData() {
     toDate: to,
     disabledDates,
     rulesByWeekday,
+    overridesByDate,
     bookings: bookingsRes.data.map((b) => ({
       start: b.starts_at,
       end: b.ends_at,
@@ -73,8 +93,9 @@ async function loadHomeData() {
     slotConfig: {
       slotMinutes: config.slotMinutes,
       slotAlignmentMinutes: config.slotAlignmentMinutes,
-      minNoticeHours: config.minNoticeHours,
+      minNoticeHours: settings.minNoticeHours,
       hostTz: config.hostTz,
+      maxBookingsPerDay: settings.maxBookingsPerDay,
     },
   };
 }

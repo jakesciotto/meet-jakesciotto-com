@@ -5,8 +5,13 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-import { computeSlots, type AvailabilityRule, type Slot } from "@/lib/slots";
-import { todayInTz, weekdayOf } from "@/lib/dates";
+import {
+  computeSlots,
+  rulesForDate,
+  type AvailabilityRule,
+  type Slot,
+} from "@/lib/slots";
+import { todayInTz } from "@/lib/dates";
 
 type SerializedBusyRange = { start: string; end: string };
 
@@ -15,6 +20,7 @@ type SlotConfig = {
   slotAlignmentMinutes: number;
   minNoticeHours: number;
   hostTz: string;
+  maxBookingsPerDay: number | null;
 };
 
 export type BookingPickerProps = {
@@ -22,6 +28,7 @@ export type BookingPickerProps = {
   fromDate: string;
   toDate: string;
   rulesByWeekday: Record<number, AvailabilityRule[]>;
+  overridesByDate: Record<string, AvailabilityRule[]>;
   bookings: SerializedBusyRange[];
   busyRanges: SerializedBusyRange[];
   slotConfig: SlotConfig;
@@ -32,6 +39,7 @@ export function BookingPicker({
   fromDate,
   toDate,
   rulesByWeekday,
+  overridesByDate,
   bookings,
   busyRanges,
   slotConfig,
@@ -66,7 +74,7 @@ export function BookingPicker({
 
   const slots = useMemo<Slot[]>(() => {
     if (!selectedDate) return [];
-    const rules = rulesByWeekday[weekdayOf(selectedDate)] ?? [];
+    const rules = rulesForDate(selectedDate, { rulesByWeekday, overridesByDate });
     return computeSlots({
       date: selectedDate,
       rules,
@@ -78,6 +86,7 @@ export function BookingPicker({
   }, [
     selectedDate,
     rulesByWeekday,
+    overridesByDate,
     parsedBusy,
     parsedBookings,
     now,

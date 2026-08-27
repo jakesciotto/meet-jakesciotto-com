@@ -4,8 +4,6 @@ export const config = {
   hostTz: process.env.HOST_TZ ?? "America/New_York",
   slotMinutes: 30,
   slotAlignmentMinutes: 30,
-  minNoticeHours: 24,
-  horizonDays: 60,
   adminEmail,
   notifyEmail: process.env.NOTIFY_EMAIL ?? adminEmail,
   appUrl: process.env.APP_URL ?? "http://localhost:3000",
