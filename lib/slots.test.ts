@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { computeSlots, type AvailabilityRule, type BusyRange } from "./slots";
+import {
+  computeSlots,
+  rulesForDate,
+  type AvailabilityRule,
+  type BusyRange,
+} from "./slots";
 
 const HOST_TZ = "America/New_York";
 
@@ -188,5 +193,131 @@ describe("computeSlots", () => {
     });
     expect(slots).toHaveLength(6);
     expect(slots[0].startsAt.toISOString()).toBe("2026-11-01T14:00:00.000Z");
+  });
+});
+
+describe("computeSlots daily cap", () => {
+  const cappedAt = (n: number | null) => ({ ...baseConfig, maxBookingsPerDay: n });
+  const bookingAt = (iso: string): BusyRange => ({
+    start: new Date(iso),
+    end: new Date(new Date(iso).getTime() + 30 * 60 * 1000),
+  });
+  const weekBefore = new Date("2026-06-01T12:00:00Z");
+
+  it("returns no slots when bookings on the day reach the cap", () => {
+    const slots = computeSlots({
+      date: "2026-06-09",
+      rules: nineToNoon,
+      busyRanges: [],
+      bookings: [bookingAt("2026-06-09T13:00:00Z"), bookingAt("2026-06-09T14:00:00Z")],
+      now: weekBefore,
+      config: cappedAt(2),
+    });
+    expect(slots).toEqual([]);
+  });
+
+  it("keeps the remaining slots while bookings are under the cap", () => {
+    const slots = computeSlots({
+      date: "2026-06-09",
+      rules: nineToNoon,
+      busyRanges: [],
+      bookings: [bookingAt("2026-06-09T13:00:00Z")],
+      now: weekBefore,
+      config: cappedAt(2),
+    });
+    expect(slots).toHaveLength(5);
+  });
+
+  it("applies no cap when maxBookingsPerDay is null", () => {
+    const slots = computeSlots({
+      date: "2026-06-09",
+      rules: nineToNoon,
+      busyRanges: [],
+      bookings: [bookingAt("2026-06-09T13:00:00Z"), bookingAt("2026-06-09T14:00:00Z")],
+      now: weekBefore,
+      config: cappedAt(null),
+    });
+    expect(slots).toHaveLength(4);
+  });
+
+  it("counts only bookings that start on that host-timezone date", () => {
+    // 2026-06-09T03:59:59Z is still June 8 in New York (EDT, UTC-4).
+    const previousDay = computeSlots({
+      date: "2026-06-09",
+      rules: nineToNoon,
+      busyRanges: [],
+      bookings: [bookingAt("2026-06-09T03:59:59Z")],
+      now: weekBefore,
+      config: cappedAt(1),
+    });
+    expect(previousDay).toHaveLength(6);
+
+    // 2026-06-09T04:00:00Z is June 9 00:00 in New York.
+    const sameDay = computeSlots({
+      date: "2026-06-09",
+      rules: nineToNoon,
+      busyRanges: [],
+      bookings: [bookingAt("2026-06-09T04:00:00Z")],
+      now: weekBefore,
+      config: cappedAt(1),
+    });
+    expect(sameDay).toEqual([]);
+  });
+
+  it("uses the 25-hour host day on DST fall-back when counting", () => {
+    // 2026-11-01 in New York runs from 04:00Z (EDT midnight) to 2026-11-02T05:00Z (EST midnight).
+    // A booking at 2026-11-02T04:30Z is Nov 1, 23:30 EST and must count.
+    const slots = computeSlots({
+      date: "2026-11-01",
+      rules: nineToNoon,
+      busyRanges: [],
+      bookings: [bookingAt("2026-11-02T04:30:00Z")],
+      now: new Date("2026-10-25T12:00:00Z"),
+      config: cappedAt(1),
+    });
+    expect(slots).toEqual([]);
+  });
+});
+
+describe("rulesForDate", () => {
+  const weekday: AvailabilityRule[] = [{ startMinute: 9 * 60, endMinute: 17 * 60 }];
+  const override: AvailabilityRule[] = [{ startMinute: 10 * 60, endMinute: 12 * 60 }];
+  // 2026-06-09 is a Tuesday (weekday 2). 2026-06-11 is a Thursday (weekday 4).
+  const rulesByWeekday = { 2: weekday };
+
+  it("uses the override windows for that date instead of the weekday rules", () => {
+    expect(
+      rulesForDate("2026-06-09", {
+        rulesByWeekday,
+        overridesByDate: { "2026-06-09": override },
+      }),
+    ).toEqual(override);
+  });
+
+  it("opens a weekday that has no rules when an override exists", () => {
+    expect(
+      rulesForDate("2026-06-11", {
+        rulesByWeekday,
+        overridesByDate: { "2026-06-11": override },
+      }),
+    ).toEqual(override);
+  });
+
+  it("falls back to the weekday rules when there is no override", () => {
+    expect(rulesForDate("2026-06-09", { rulesByWeekday, overridesByDate: {} })).toEqual(weekday);
+  });
+
+  it("returns no rules when neither an override nor a weekday rule exists", () => {
+    expect(rulesForDate("2026-06-11", { rulesByWeekday, overridesByDate: {} })).toEqual([]);
+  });
+
+  it("returns no rules for a blocked date even when an override exists", () => {
+    expect(
+      rulesForDate("2026-06-09", {
+        rulesByWeekday,
+        overridesByDate: { "2026-06-09": override },
+        blockedDates: new Set(["2026-06-09"]),
+      }),
+    ).toEqual([]);
   });
 });
