@@ -4,8 +4,12 @@ import { Button } from "@/components/ui/button";
 import { SlotList, type SlotListItem } from "@/components/slot-list";
 import { getSlots } from "@/actions/get-slots";
 import { config } from "@/lib/config";
+import { DEFAULT_DURATION, parseDuration } from "@/lib/durations";
 
-type Props = { params: Promise<{ date: string }> };
+type Props = {
+  params: Promise<{ date: string }>;
+  searchParams: Promise<{ duration?: string }>;
+};
 
 function formatHeader(date: string): string {
   const [y, m, d] = date.split("-").map(Number);
@@ -26,11 +30,13 @@ function formatSlot(iso: string): string {
   }).format(new Date(iso));
 }
 
-export default async function SlotsPage({ params }: Props) {
-  const { date } = await params;
+export default async function SlotsPage({ params, searchParams }: Props) {
+  const [{ date }, { duration: rawDuration }] = await Promise.all([params, searchParams]);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) notFound();
+  const duration = rawDuration === undefined ? DEFAULT_DURATION : parseDuration(rawDuration);
+  if (!duration) notFound();
 
-  const slots = await getSlots(date);
+  const slots = await getSlots(date, duration);
   const items: SlotListItem[] = slots.map((s) => ({
     startIso: s.startsAt.toISOString(),
     label: formatSlot(s.startsAt.toISOString()),
@@ -49,10 +55,10 @@ export default async function SlotsPage({ params }: Props) {
             {formatHeader(date)}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Times shown in {config.hostTz.replace("_", " ")}.
+            {duration} minute meeting. Times shown in {config.hostTz.replace("_", " ")}.
           </p>
         </header>
-        <SlotList date={date} slots={items} />
+        <SlotList date={date} duration={duration} slots={items} />
       </div>
     </main>
   );

@@ -2,8 +2,6 @@ const adminEmail = requireEnv("ADMIN_EMAIL");
 
 export const config = {
   hostTz: process.env.HOST_TZ ?? "America/New_York",
-  slotMinutes: 30,
-  slotAlignmentMinutes: 30,
   adminEmail,
   notifyEmail: process.env.NOTIFY_EMAIL ?? adminEmail,
   appUrl: process.env.APP_URL ?? "http://localhost:3000",

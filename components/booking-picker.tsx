@@ -12,12 +12,17 @@ import {
   type Slot,
 } from "@/lib/slots";
 import { todayInTz } from "@/lib/dates";
+import {
+  DEFAULT_DURATION,
+  MEETING_DURATIONS,
+  parseDuration,
+  slotAlignmentFor,
+  type MeetingDuration,
+} from "@/lib/durations";
 
 type SerializedBusyRange = { start: string; end: string };
 
 type SlotConfig = {
-  slotMinutes: number;
-  slotAlignmentMinutes: number;
   minNoticeHours: number;
   hostTz: string;
   maxBookingsPerDay: number | null;
@@ -47,6 +52,9 @@ export function BookingPicker({
   const router = useRouter();
   const searchParams = useSearchParams();
   const disabledSet = useMemo(() => new Set(disabledDates), [disabledDates]);
+  const [duration, setDuration] = useState<MeetingDuration>(
+    () => parseDuration(searchParams.get("duration")) ?? DEFAULT_DURATION,
+  );
   const [selectedDate, setSelectedDate] = useState<string | null>(() => {
     const d = searchParams.get("date");
     if (!d || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return null;
@@ -81,10 +89,15 @@ export function BookingPicker({
       busyRanges: parsedBusy,
       bookings: parsedBookings,
       now,
-      config: slotConfig,
+      config: {
+        ...slotConfig,
+        slotMinutes: duration,
+        slotAlignmentMinutes: slotAlignmentFor(duration),
+      },
     });
   }, [
     selectedDate,
+    duration,
     rulesByWeekday,
     overridesByDate,
     parsedBusy,
@@ -110,6 +123,7 @@ export function BookingPicker({
 
   return (
     <div className="space-y-5">
+      <DurationPicker value={duration} onChange={setDuration} />
       <div className="rounded-sm border border-primary/25 bg-card p-2 shadow-[inset_0_0_60px_color-mix(in_oklab,var(--primary)_4%,transparent)] sm:p-3">
         <Calendar
           mode="single"
@@ -128,7 +142,7 @@ export function BookingPicker({
       </div>
       {selectedDate && (
         <div
-          key={selectedDate}
+          key={`${selectedDate}:${duration}`}
           className="space-y-3 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500"
         >
           <div className="flex items-baseline justify-between gap-3 border-b border-primary/20 pb-2">
@@ -146,11 +160,48 @@ export function BookingPicker({
           </div>
           <SlotPanel
             date={selectedDate}
+            duration={duration}
             slots={slots}
             hostTz={slotConfig.hostTz}
           />
         </div>
       )}
+    </div>
+  );
+}
+
+function DurationPicker({
+  value,
+  onChange,
+}: {
+  value: MeetingDuration;
+  onChange: (duration: MeetingDuration) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span id="duration-label" className="pl-1 text-sm text-muted-foreground">
+        how long
+      </span>
+      <div
+        role="radiogroup"
+        aria-labelledby="duration-label"
+        className="flex items-center gap-1"
+      >
+        {MEETING_DURATIONS.map((d) => (
+          <Button
+            key={d}
+            type="button"
+            role="radio"
+            aria-checked={d === value}
+            size="sm"
+            variant={d === value ? "default" : "outline"}
+            onClick={() => onChange(d)}
+            className="h-7 px-3 text-xs"
+          >
+            {d} min
+          </Button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -167,10 +218,12 @@ function formatDateHeader(isoDate: string): string {
 
 function SlotPanel({
   date,
+  duration,
   slots,
   hostTz,
 }: {
   date: string;
+  duration: MeetingDuration;
   slots: Slot[];
   hostTz: string;
 }) {
@@ -211,7 +264,7 @@ function SlotPanel({
               <Link
                 href={{
                   pathname: "/book/confirm",
-                  query: { date, start: iso },
+                  query: { date, start: iso, duration },
                 }}
                 prefetch
               >

@@ -86,6 +86,22 @@ describe("sendHostBookingNotice", () => {
     expect(body.text).toContain("11:00");
   });
 
+  it("states the meeting length from the start and end times", async () => {
+    const fetchMock = mockFetch();
+    const { sendHostBookingNotice } = await loadEmailModule();
+
+    await sendHostBookingNotice(NOTICE);
+    await sendHostBookingNotice({
+      ...NOTICE,
+      endsAt: new Date("2026-09-01T17:45:00.000Z"),
+    });
+
+    const first = JSON.parse(fetchMock.mock.calls[0][1].body);
+    const second = JSON.parse(fetchMock.mock.calls[1][1].body);
+    expect(first.text).toContain("Length: 30 minutes");
+    expect(second.text).toContain("Length: 45 minutes");
+  });
+
   it("escapes invitee text in the HTML body", async () => {
     const fetchMock = mockFetch();
     const { sendHostBookingNotice } = await loadEmailModule();

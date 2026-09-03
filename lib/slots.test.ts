@@ -196,6 +196,96 @@ describe("computeSlots", () => {
   });
 });
 
+describe("computeSlots meeting lengths", () => {
+  const weekBefore = new Date("2026-06-01T12:00:00Z");
+  const withLength = (slotMinutes: number, slotAlignmentMinutes: number) => ({
+    ...baseConfig,
+    slotMinutes,
+    slotAlignmentMinutes,
+  });
+  const starts = (slots: ReturnType<typeof computeSlots>) =>
+    slots.map((s) => s.startsAt.toISOString());
+
+  it("offers 15 minute meetings every 15 minutes", () => {
+    const slots = computeSlots({
+      date: "2026-06-09",
+      rules: [{ startMinute: 9 * 60, endMinute: 10 * 60 }],
+      busyRanges: [],
+      bookings: [],
+      now: weekBefore,
+      config: withLength(15, 15),
+    });
+    expect(starts(slots)).toEqual([
+      "2026-06-09T13:00:00.000Z",
+      "2026-06-09T13:15:00.000Z",
+      "2026-06-09T13:30:00.000Z",
+      "2026-06-09T13:45:00.000Z",
+    ]);
+    expect(slots[0].endsAt.toISOString()).toBe("2026-06-09T13:15:00.000Z");
+  });
+
+  it("offers 45 minute meetings every 30 minutes and drops starts that run past the window", () => {
+    const slots = computeSlots({
+      date: "2026-06-09",
+      rules: nineToNoon,
+      busyRanges: [],
+      bookings: [],
+      now: weekBefore,
+      config: withLength(45, 30),
+    });
+    // 11:30 would end at 12:15, past the noon close.
+    expect(starts(slots)).toEqual([
+      "2026-06-09T13:00:00.000Z",
+      "2026-06-09T13:30:00.000Z",
+      "2026-06-09T14:00:00.000Z",
+      "2026-06-09T14:30:00.000Z",
+      "2026-06-09T15:00:00.000Z",
+    ]);
+    expect(slots[0].endsAt.toISOString()).toBe("2026-06-09T13:45:00.000Z");
+  });
+
+  it("hides every 45 minute start that overlaps a 45 minute booking", () => {
+    const slots = computeSlots({
+      date: "2026-06-09",
+      rules: nineToNoon,
+      busyRanges: [],
+      bookings: [
+        {
+          start: new Date("2026-06-09T13:00:00Z"),
+          end: new Date("2026-06-09T13:45:00Z"),
+        },
+      ],
+      now: weekBefore,
+      config: withLength(45, 30),
+    });
+    // 9:00 is taken and 9:30 overlaps until 9:45. 10:00 is the first clear start.
+    expect(starts(slots)).toEqual([
+      "2026-06-09T14:00:00.000Z",
+      "2026-06-09T14:30:00.000Z",
+      "2026-06-09T15:00:00.000Z",
+    ]);
+  });
+
+  it("offers 60 minute meetings every 30 minutes", () => {
+    const slots = computeSlots({
+      date: "2026-06-09",
+      rules: nineToNoon,
+      busyRanges: [],
+      bookings: [],
+      now: weekBefore,
+      config: withLength(60, 30),
+    });
+    expect(starts(slots)).toEqual([
+      "2026-06-09T13:00:00.000Z",
+      "2026-06-09T13:30:00.000Z",
+      "2026-06-09T14:00:00.000Z",
+      "2026-06-09T14:30:00.000Z",
+      "2026-06-09T15:00:00.000Z",
+    ]);
+    expect(slots[4].endsAt.toISOString()).toBe("2026-06-09T16:00:00.000Z");
+  });
+});
+
 describe("computeSlots daily cap", () => {
   const cappedAt = (n: number | null) => ({ ...baseConfig, maxBookingsPerDay: n });
   const bookingAt = (iso: string): BusyRange => ({
