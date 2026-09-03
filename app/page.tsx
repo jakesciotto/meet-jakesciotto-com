@@ -91,8 +91,6 @@ async function loadHomeData() {
       end: b.end.toISOString(),
     })),
     slotConfig: {
-      slotMinutes: config.slotMinutes,
-      slotAlignmentMinutes: config.slotAlignmentMinutes,
       minNoticeHours: settings.minNoticeHours,
       hostTz: config.hostTz,
       maxBookingsPerDay: settings.maxBookingsPerDay,

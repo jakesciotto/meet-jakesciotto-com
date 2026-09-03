@@ -6,13 +6,14 @@ import { z } from "zod";
 import { serviceClient } from "@/lib/supabase";
 import { insertEvent } from "@/lib/google-calendar";
 import { sendHostBookingNotice } from "@/lib/email";
-import { config } from "@/lib/config";
+import { MEETING_DURATIONS } from "@/lib/durations";
 import { getSlots } from "./get-slots";
 import { clearSlotsCache } from "@/lib/slots-cache";
 
 const InputSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   startIso: z.string().datetime(),
+  duration: z.literal([...MEETING_DURATIONS]),
   name: z.string().trim().min(1).max(100),
   company: z.string().trim().min(1).max(120),
   email: z.string().trim().toLowerCase().email().max(200),
@@ -56,7 +57,7 @@ export async function createBooking(
     };
   }
 
-  const slots = await getSlots(input.date);
+  const slots = await getSlots(input.date, input.duration);
   const startMs = new Date(input.startIso).getTime();
   const stillFree = slots.some((s) => s.startsAt.getTime() === startMs);
   if (!stillFree) {
@@ -68,7 +69,7 @@ export async function createBooking(
   }
 
   const startsAt = new Date(input.startIso);
-  const endsAt = new Date(startsAt.getTime() + config.slotMinutes * 60 * 1000);
+  const endsAt = new Date(startsAt.getTime() + input.duration * 60 * 1000);
 
   const description = [
     `Booking via meet.jakesciotto.com`,

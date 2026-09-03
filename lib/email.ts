@@ -50,6 +50,7 @@ function detailLines(notice: HostNotice): string[] {
   const lines = [
     `Company: ${notice.inviteeCompany}`,
     `Email: ${notice.inviteeEmail}`,
+    `Length: ${minutesBetween(notice.startsAt, notice.endsAt)} minutes`,
     `How: ${describeConferencing(notice)}`,
   ];
   if (notice.notes) lines.push("", "Notes:", notice.notes);
@@ -65,6 +66,10 @@ function describeConferencing(notice: HostNotice): string {
     return `Their link: ${notice.meetingLink ?? "not provided"}`;
   }
   return "Google Meet (link is in the calendar invite)";
+}
+
+function minutesBetween(start: Date, end: Date): number {
+  return Math.round((end.getTime() - start.getTime()) / 60_000);
 }
 
 function formatWhen(date: Date): string {

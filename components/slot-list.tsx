@@ -1,12 +1,21 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import type { MeetingDuration } from "@/lib/durations";
 
 export type SlotListItem = {
   startIso: string;
   label: string;
 };
 
-export function SlotList({ date, slots }: { date: string; slots: SlotListItem[] }) {
+export function SlotList({
+  date,
+  duration,
+  slots,
+}: {
+  date: string;
+  duration: MeetingDuration;
+  slots: SlotListItem[];
+}) {
   if (slots.length === 0) {
     return (
       <p className="rounded-lg border bg-card p-4 text-sm text-muted-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300">
@@ -26,7 +35,7 @@ export function SlotList({ date, slots }: { date: string; slots: SlotListItem[] 
             <Link
               href={{
                 pathname: "/book/confirm",
-                query: { date, start: s.startIso },
+                query: { date, start: s.startIso, duration },
               }}
               prefetch
             >
