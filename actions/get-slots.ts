@@ -12,6 +12,7 @@ import {
 } from "@/lib/slots";
 import { getCachedSlots, setCachedSlots } from "@/lib/slots-cache";
 import { loadSettings } from "@/lib/settings";
+import { isMeetingDuration, slotAlignmentFor, type MeetingDuration } from "@/lib/durations";
 import { config } from "@/lib/config";
 import { addDays, todayInTz, weekdayOf } from "@/lib/dates";
 
@@ -27,12 +28,16 @@ function toRules(rows: WindowRow[]): AvailabilityRule[] {
   return rows.map((r) => ({ startMinute: r.start_minute, endMinute: r.end_minute }));
 }
 
-export async function getSlots(date: string): Promise<Slot[]> {
+export async function getSlots(date: string, duration: MeetingDuration): Promise<Slot[]> {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     throw new Error("Invalid date format. Expected YYYY-MM-DD.");
   }
+  if (!isMeetingDuration(duration)) {
+    throw new Error("Invalid meeting length.");
+  }
 
-  const cached = getCachedSlots(date);
+  const cacheKey = `${date}:${duration}`;
+  const cached = getCachedSlots(cacheKey);
   if (cached) return cached;
 
   const supabase = serviceClient();
@@ -82,14 +87,14 @@ export async function getSlots(date: string): Promise<Slot[]> {
     bookings,
     now: new Date(),
     config: {
-      slotMinutes: config.slotMinutes,
-      slotAlignmentMinutes: config.slotAlignmentMinutes,
+      slotMinutes: duration,
+      slotAlignmentMinutes: slotAlignmentFor(duration),
       minNoticeHours: settings.minNoticeHours,
       hostTz: config.hostTz,
       maxBookingsPerDay: settings.maxBookingsPerDay,
     },
   });
 
-  setCachedSlots(date, slots);
+  setCachedSlots(cacheKey, slots);
   return slots;
 }

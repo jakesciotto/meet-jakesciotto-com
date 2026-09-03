@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { createBooking } from "@/actions/create-booking";
+import type { MeetingDuration } from "@/lib/durations";
 
 type Conferencing = "meet" | "phone" | "other";
 
@@ -28,9 +29,11 @@ function isLikelyUrl(s: string): boolean {
 export function BookingForm({
   date,
   startIso,
+  duration,
 }: {
   date: string;
   startIso: string;
+  duration: MeetingDuration;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -87,6 +90,7 @@ export function BookingForm({
     const input = {
       date,
       startIso,
+      duration,
       name,
       company,
       email,
@@ -101,7 +105,7 @@ export function BookingForm({
       if (result.ok) {
         router.push(`/book/success/${result.bookingId}`);
       } else if (result.error === "slot_taken") {
-        router.push(`/book/${date}?taken=1`);
+        router.push(`/book/${date}?taken=1&duration=${duration}`);
       } else {
         setError(result.message);
       }
