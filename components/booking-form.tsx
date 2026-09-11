@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { capture } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -103,6 +104,11 @@ export function BookingForm({
     startTransition(async () => {
       const result = await createBooking(input);
       if (result.ok) {
+        capture("booking_created", {
+          conferencing,
+          duration_minutes: duration,
+          has_notes: Boolean(notes),
+        });
         router.push(`/book/success/${result.bookingId}`);
       } else if (result.error === "slot_taken") {
         router.push(`/book/${date}?taken=1&duration=${duration}`);
