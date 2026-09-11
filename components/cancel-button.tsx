@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { capture } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cancelBooking } from "@/actions/cancel-booking";
@@ -16,6 +17,9 @@ export function CancelBookingButton({ bookingId }: { bookingId: string }) {
     startTransition(async () => {
       const result = await cancelBooking({ bookingId });
       if (result.ok || result.error === "already_cancelled") {
+        if (result.ok) {
+          capture("booking_cancelled");
+        }
         router.refresh();
       } else {
         setError(result.message);

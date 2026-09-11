@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { capture } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,6 +45,11 @@ export function SettingsEditor({ initial }: { initial: Settings }) {
     startTransition(async () => {
       try {
         await updateSettings(input);
+        capture("booking_settings_updated", {
+          max_bookings_per_day: input.maxBookingsPerDay,
+          min_notice_hours: input.minNoticeHours,
+          horizon_days: input.horizonDays,
+        });
         setStatus("Saved");
       } catch (e) {
         setStatus(e instanceof Error ? e.message : "Save failed");

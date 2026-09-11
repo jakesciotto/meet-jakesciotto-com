@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { capture } from "@/lib/analytics";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import {
@@ -112,6 +113,7 @@ export function BookingPicker({
     if (disabledSet.has(iso)) return;
     setSelectedDate(iso);
     setViewMonth(date);
+    capture("booking_date_selected");
   };
 
   const onClearDate = () => {
@@ -177,6 +179,11 @@ function DurationPicker({
   value: MeetingDuration;
   onChange: (duration: MeetingDuration) => void;
 }) {
+  const onDurationSelect = (duration: MeetingDuration) => {
+    onChange(duration);
+    capture("meeting_duration_selected", { duration_minutes: duration });
+  };
+
   return (
     <div className="flex items-center justify-between gap-3">
       <span id="duration-label" className="pl-1 text-sm text-muted-foreground">
@@ -195,7 +202,7 @@ function DurationPicker({
             aria-checked={d === value}
             size="sm"
             variant={d === value ? "default" : "outline"}
-            onClick={() => onChange(d)}
+            onClick={() => onDurationSelect(d)}
             className="h-7 px-3 text-xs"
           >
             {d} min
@@ -265,6 +272,9 @@ function SlotPanel({
                 href={{
                   pathname: "/book/confirm",
                   query: { date, start: iso, duration },
+                }}
+                onClick={() => {
+                  capture("booking_slot_selected", { duration_minutes: duration });
                 }}
                 prefetch
               >

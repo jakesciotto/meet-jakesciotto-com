@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { PlusIcon } from "lucide-react";
+import { capture } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_WINDOW, WindowRows, type Window } from "@/components/admin/time-select";
 import { setWeekdayAvailability } from "@/actions/availability";
@@ -49,6 +50,7 @@ function WeekdayRow({
     startTransition(async () => {
       try {
         await setWeekdayAvailability({ weekday, windows });
+        capture("availability_updated", { weekday, window_count: windows.length });
         setStatus("Saved");
       } catch (e) {
         setStatus(e instanceof Error ? e.message : "Save failed");

@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { CalendarIcon, PlusIcon } from "lucide-react";
+import { capture } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -183,6 +184,11 @@ export function DateOverridesEditor({
           await addOpenDates({ dates: selectedDays, windows: sorted, note: note || undefined });
           applyOpen(selectedDays, sorted, n);
         }
+        capture("date_overrides_updated", {
+          override_type: mode,
+          date_count: selectedDays.length,
+          window_count: mode === "open" ? sorted.length : 0,
+        });
         setRange(undefined);
         setNote("");
       } catch (e) {
@@ -203,6 +209,10 @@ export function DateOverridesEditor({
           await removeOpenDates({ dates: run.days });
           setOpen((o) => o.filter((x) => !removing.has(x.date)));
         }
+        capture("date_overrides_removed", {
+          override_type: run.kind,
+          date_count: run.days.length,
+        });
       } catch (e) {
         setStatus(e instanceof Error ? e.message : "Remove failed");
       }
