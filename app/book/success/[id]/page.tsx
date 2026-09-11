@@ -46,10 +46,10 @@ export default async function SuccessPage({ params }: Props) {
         <p className="text-sm text-muted-foreground">
           this very cool site sent you a confirmation email to{" "}
           {data.invitee_email}. if you don&rsquo;t see it, check your spam
-          folder or some shit. i don't know.
+          folder or some shit. i don&rsquo;t know.
         </p>
         <p className="text-sm text-muted-foreground">
-          if you answered "yes" to if pie charts are cool or not, be prepared to
+          if you answered &ldquo;yes&rdquo; to if pie charts are cool or not, be prepared to
           defend that bullshit.
         </p>
         {data.cancelled_at && (

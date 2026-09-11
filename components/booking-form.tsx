@@ -235,7 +235,7 @@ export function BookingForm({
 
       <div className="space-y-3">
         <Label className="pl-1" htmlFor="notes">
-          anything else you'd like me to know?
+          anything else you&rsquo;d like me to know?
         </Label>
         <Input id="notes" name="notes" />
       </div>
