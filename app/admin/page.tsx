@@ -9,7 +9,8 @@ import {
   type OpenDate,
 } from "@/components/admin/date-overrides-editor";
 import { SettingsEditor } from "@/components/admin/settings-editor";
-import { Button } from "@/components/ui/button";
+import { AnalyticsIdentity } from "@/components/admin/analytics-identity";
+import { SignOutButton } from "@/components/admin/sign-out-button";
 
 type RulesByWeekday = Record<number, { startMinute: number; endMinute: number }[]>;
 
@@ -59,6 +60,7 @@ export default async function AdminPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
+      <AnalyticsIdentity email={session.email} />
       <header className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">
@@ -69,9 +71,7 @@ export default async function AdminPage() {
           </p>
         </div>
         <form action={adminLogout}>
-          <Button type="submit" variant="outline" size="sm">
-            Sign out
-          </Button>
+          <SignOutButton />
         </form>
       </header>
 
