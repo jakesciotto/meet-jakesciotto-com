@@ -49,7 +49,7 @@ export default async function ConfirmPage({
             {formatHeader(start, duration)}
           </h1>
           <p className="text-sm text-muted-foreground">
-            tell me a little about yourself and how we'll meet
+            tell me a little about yourself and how we&rsquo;ll meet
           </p>
         </header>
         <BookingForm date={date} startIso={start} duration={duration} />
