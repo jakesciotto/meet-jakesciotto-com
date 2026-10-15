@@ -1,20 +1,22 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LocalTime } from "@/components/local-time";
 import type { MeetingDuration } from "@/lib/durations";
 
 export type SlotListItem = {
   startIso: string;
-  label: string;
 };
 
 export function SlotList({
   date,
   duration,
   slots,
+  hostTz,
 }: {
   date: string;
   duration: MeetingDuration;
   slots: SlotListItem[];
+  hostTz: string;
 }) {
   if (slots.length === 0) {
     return (
@@ -39,7 +41,7 @@ export function SlotList({
               }}
               prefetch
             >
-              {s.label}
+              <LocalTime iso={s.startIso} hostTz={hostTz} format="slot" slotDate={date} />
             </Link>
           </Button>
         </li>
