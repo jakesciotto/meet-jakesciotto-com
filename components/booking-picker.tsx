@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { LocalTime } from "@/components/local-time";
+import { TzNote } from "@/components/tz-note";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { capture } from "@/lib/analytics";
@@ -148,9 +150,14 @@ export function BookingPicker({
           className="space-y-3 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500"
         >
           <div className="flex items-baseline justify-between gap-3 border-b border-primary/20 pb-2">
-            <h2 className="text-base font-medium tracking-tight lowercase">
-              {formatDateHeader(selectedDate)}
-            </h2>
+            <div className="space-y-0.5">
+              <h2 className="text-base font-medium tracking-tight lowercase">
+                {formatDateHeader(selectedDate)}
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                <TzNote hostTz={slotConfig.hostTz} />
+              </p>
+            </div>
             <Button
               variant="ghost"
               size="sm"
@@ -234,16 +241,6 @@ function SlotPanel({
   slots: Slot[];
   hostTz: string;
 }) {
-  const formatter = useMemo(
-    () =>
-      new Intl.DateTimeFormat("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        timeZone: hostTz,
-      }),
-    [hostTz],
-  );
-
   if (slots.length === 0) {
     return (
       <p className="rounded-lg border bg-card p-4 text-sm text-muted-foreground motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300">
@@ -278,7 +275,7 @@ function SlotPanel({
                 }}
                 prefetch
               >
-                {formatter.format(s.startsAt)}
+                <LocalTime iso={iso} hostTz={hostTz} format="slot" slotDate={date} />
               </Link>
             </Button>
           </li>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SlotList, type SlotListItem } from "@/components/slot-list";
 import { getSlots } from "@/actions/get-slots";
 import { config } from "@/lib/config";
+import { TzNote } from "@/components/tz-note";
 import { DEFAULT_DURATION, parseDuration } from "@/lib/durations";
 
 type Props = {
@@ -22,14 +23,6 @@ function formatHeader(date: string): string {
   }).format(new Date(Date.UTC(y, m - 1, d)));
 }
 
-function formatSlot(iso: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: config.hostTz,
-  }).format(new Date(iso));
-}
-
 export default async function SlotsPage({ params, searchParams }: Props) {
   const [{ date }, { duration: rawDuration }] = await Promise.all([params, searchParams]);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) notFound();
@@ -39,7 +32,6 @@ export default async function SlotsPage({ params, searchParams }: Props) {
   const slots = await getSlots(date, duration);
   const items: SlotListItem[] = slots.map((s) => ({
     startIso: s.startsAt.toISOString(),
-    label: formatSlot(s.startsAt.toISOString()),
   }));
 
   return (
@@ -55,10 +47,10 @@ export default async function SlotsPage({ params, searchParams }: Props) {
             {formatHeader(date)}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {duration} minute meeting. Times shown in {config.hostTz.replace("_", " ")}.
+            {duration} minute meeting. <TzNote hostTz={config.hostTz} />.
           </p>
         </header>
-        <SlotList date={date} duration={duration} slots={items} />
+        <SlotList date={date} duration={duration} slots={items} hostTz={config.hostTz} />
       </div>
     </main>
   );

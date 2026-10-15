@@ -3,20 +3,9 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { serviceClient } from "@/lib/supabase";
 import { config } from "@/lib/config";
+import { LocalTime } from "@/components/local-time";
 
 type Props = { params: Promise<{ id: string }> };
-
-function formatWhen(startsAt: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZoneName: "short",
-    timeZone: config.hostTz,
-  }).format(new Date(startsAt));
-}
 
 export default async function SuccessPage({ params }: Props) {
   const { id } = await params;
@@ -39,7 +28,7 @@ export default async function SuccessPage({ params }: Props) {
         <p className="text-base">
           {data.invitee_name}, your meeting is set for{" "}
           <strong className="tracking-tight lowercase">
-            {formatWhen(data.starts_at)}
+            <LocalTime iso={data.starts_at} hostTz={config.hostTz} format="when" lowercase />
           </strong>
           .
         </p>

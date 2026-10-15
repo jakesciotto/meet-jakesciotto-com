@@ -3,28 +3,10 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { BookingForm } from "@/components/booking-form";
 import { config } from "@/lib/config";
-import { DEFAULT_DURATION, parseDuration, type MeetingDuration } from "@/lib/durations";
+import { DEFAULT_DURATION, parseDuration } from "@/lib/durations";
+import { LocalTime } from "@/components/local-time";
 
 type Search = Promise<{ date?: string; start?: string; duration?: string }>;
-
-function formatHeader(startIso: string, duration: MeetingDuration): string {
-  const day = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    timeZone: config.hostTz,
-  })
-    .format(new Date(startIso))
-    .toLowerCase();
-  const time = new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: config.hostTz,
-  })
-    .format(new Date(startIso))
-    .toLowerCase();
-  return `${day} at ${time} for ${duration} minutes`;
-}
 
 export default async function ConfirmPage({
   searchParams,
@@ -46,7 +28,8 @@ export default async function ConfirmPage({
         </div>
         <header className="mb-6 space-y-1">
           <h1 className="border-b border-primary/20 pb-2 text-lg font-semibold tracking-tight lowercase">
-            {formatHeader(start, duration)}
+            <LocalTime iso={start} hostTz={config.hostTz} format="when" lowercase /> for{" "}
+            {duration} minutes
           </h1>
           <p className="text-sm text-muted-foreground">
             tell me a little about yourself and how we&rsquo;ll meet
